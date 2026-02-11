@@ -1,0 +1,106 @@
+{
+  "GIFT001": {
+    "receiver": "Neha",
+    "sender": "Amit",
+    "greeting": "Hey Neha 💖",
+    "message": "These roses are just a small reflection of how special you are to me.",
+    "photo": "GIFT001.jpg",
+    "template": "rose"
+  },
+
+  "GIFT002": {
+    "receiver": "Anjali",
+    "sender": "Rahul",
+    "greeting": "Hey Anjali 💕",
+    "message": "Wishing you a Rose Day filled with love, warmth, and beautiful moments.",
+    "photo": "GIFT002.jpg",
+    "template": "rose"
+  },
+
+  "GIFT003": {
+    "receiver": "Anjali",
+    "sender": "Rahul",
+    "greeting": "Hey Anjali 💕",
+    "message": "Wishing you a Propose Day filled with love, warmth, and beautiful moment.",
+    "photo": "GIFT003.jpg",
+    "template": "heart"
+  },
+
+  "LETTER001": {
+    "receiver": "Emily",
+    "sender": "James",
+    "message": "These roses are just a small reflection of how special you are to me. Every moment with you feels like a dream come true. Your kindness, your laughter, your beautiful soul - they inspire me every single day.",
+    "photo": "LETTER001.jpg",
+    "template": "letter"
+  },
+
+  "LETTER002": {
+    "receiver": "Sarah",
+    "sender": "Michael",
+    "message": "Wishing you a Rose Day filled with love, warmth, and beautiful moments. You make every day brighter just by being in it. I promise to love you, support you, and be by your side through everything.",
+    "photo": "LETTER002.jpg",
+    "template": "letter"
+  },
+
+  "LETTER003": {
+    "receiver": "Olivia",
+    "sender": "Daniel",
+    "message": "Wishing you a Propose Day filled with love, warmth, and beautiful moments. Will you be mine forever? I've been waiting to say this right - to let it settle between us like morning light.",
+    "photo": "LETTER003.jpg",
+    "template": "letter"
+  },
+  "LETTER004": {
+    "template": "letter",
+    "receiver": "Sarah",
+    "sender": "John",
+    "messages": {
+      "greeting": "Hey Sarah 💖",
+      "heartTap": "Every little thing about you makes my heart smile.",
+      "scratchReveal": "I Love You",
+      "finalMessage": "I don't need a special day to love you. But I'll choose you every day anyway ❤️"
+    }
+  },
+  "LETTER005": {
+    "template": "letter",
+    "receiver": "Emma",
+    "sender": "Michael",
+    "messages": {
+      "greeting": "Hey Emma 💕",
+      "heartTap": "You're the most beautiful part of my day.",
+      "scratchReveal": "You Complete Me",
+      "finalMessage": "Every moment with you feels like forever"
+    }
+  },
+  "LETTER006": {
+    "template": "letter",
+    "receiver": "Lisa",
+    "sender": "David",
+    "messages": {
+      "greeting": "Hey Lisa 💝",
+      "heartTap": "Loving you is the best decision I've ever made.",
+      "scratchReveal": "Forever Yours",
+      "finalMessage": "You're my happily ever after"
+    }
+  },
+
+"VROSE001": {
+    "template": "vrose",
+    "receiver": "Lisa",
+    "sender": "David",
+    "message": "Wishing you a Propose Day filled with love, warmth, and beautiful moments. Will you be mine forever? I've been waiting to say this right - to let it settle between us like morning light.",
+    "photo": "VROSE001.jpg"
+    },
+  
+  "VLETTER007": {
+    "template": "vletter",
+    "receiver": "Your Love",
+    "sender": "Your Name",
+    "photo": "VLETTER007.jpg",
+    "messages": {
+      "greeting": "Hey Beautiful 💖",
+      "heartTap": "Every moment with you is pure magic.",
+      "scratchReveal": "Forever Mine",
+      "finalMessage": "You make my heart feel like it's home ❤️"
+    }
+  }
+}

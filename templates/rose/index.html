@@ -1,0 +1,1550 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rose Day – Gift On Screen</title>
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{
+  --ink:#06060c;
+  --night:#0b1024;
+  --midnight:#111432;
+  --blue:#3a6cff;
+  --blue-soft:#8cb6ff;
+  --pink:#ff4fa3;
+  --pink-soft:#ff9acb;
+  --gold:#ffd700;
+  --gold-soft:#ffe066;
+  --text:#f8f3f7;
+  --stroke:rgba(255,255,255,0.12);
+  --shadow-blue:rgba(58,108,255,0.28);
+  --shadow-pink:rgba(255,79,163,0.24);
+  --brand-gradient:linear-gradient(120deg,var(--blue-soft),var(--pink-soft));
+  --bg-gradient:
+    radial-gradient(640px 420px at 12% 10%, rgba(58,108,255,0.35), transparent 60%),
+    radial-gradient(560px 420px at 88% 16%, rgba(255,79,163,0.35), transparent 62%),
+    linear-gradient(135deg, #05060b 0%, #0b1024 45%, #1a0f22 75%, #07080f 100%);
+  --font-display:"Playfair Display", serif;
+  --font-sans:"Manrope", sans-serif;
+}
+
+*{box-sizing:border-box;}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:var(--font-sans);
+  background:var(--bg-gradient);
+  color:var(--text);
+  overflow:hidden;
+  position:relative;
+}
+
+/* Prevent image selection and dragging */
+img {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  pointer-events: none;
+}
+
+/* ================= LAYOUT ================= */
+.container{
+  max-width:420px;
+  margin:0 auto;
+  padding:22px 16px 40px;
+  min-height:100vh;
+  text-align:center;
+  position:relative;
+  z-index:1;
+}
+
+/* ================= BRANDING ================= */
+#branding {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 20;
+  opacity: 0.95;
+  transition: opacity 0.3s ease;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(10, 12, 26, 0.6);
+  border: 1px solid var(--stroke);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+#branding:hover {
+  opacity: 1;
+}
+
+.logo {
+  height: 48px;
+  width: auto;
+  transition: transform 0.3s ease;
+}
+
+#branding:hover .logo {
+  transform: scale(1.15);
+}
+
+.brand-name {
+  font-size: 1.2rem;
+  letter-spacing: 3px;
+  font-weight: 600;
+  color: transparent;
+  font-family: var(--font-display);
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+}
+
+#branding:hover .brand-name {
+  filter: brightness(1.1);
+}
+
+/* ================= BRAND ================= */
+.brand{margin-top:8px;}
+.logo{font-size:1.6rem;font-weight:700;font-family:var(--font-display);}
+.tagline{font-size:.85rem;opacity:.75;margin-top:2px;}
+.divider{
+  width:64px;height:2px;
+  background:linear-gradient(90deg,transparent,var(--pink-soft),transparent);
+  margin:14px auto 12px;
+}
+
+/* ================= TEXT ================= */
+h1{
+  font-size:1.6rem;
+  margin:10px 0 6px;
+  font-family:var(--font-display);
+  color:transparent;
+  background:var(--brand-gradient);
+  -webkit-background-clip:text;
+}
+.subtitle{font-size:.95rem;opacity:.8;margin-bottom:14px;}
+
+  .counter{
+  font-size:.95rem;
+  opacity:.85;
+  margin-bottom:12px;
+  color:var(--pink-soft);
+}
+.counter.bump{animation:counterPop .35s ease;}
+@keyframes counterPop{50%{transform:scale(1.15);}}
+
+/* Heart Progress Indicator */
+.heart-progress{
+  display:flex;
+  gap:6px;
+  justify-content:center;
+  align-items:center;
+  margin-bottom:12px;
+}
+.heart-icon{
+  width:18px;
+  height:18px;
+  background:rgba(255,255,255,0.2);
+  border-radius:50%;
+  position:relative;
+  transition:all 0.3s ease;
+}
+.heart-icon::before{
+  content:"";
+  position:absolute;
+  top:2px;
+  left:2px;
+  right:2px;
+  bottom:2px;
+  background:transparent;
+  border-radius:50%;
+  transition:all 0.3s ease;
+}
+.heart-icon.filled::before{
+  background:linear-gradient(135deg,var(--pink-soft),var(--gold-soft));
+  box-shadow:0 0 12px rgba(255,79,163,0.4);
+}
+.heart-icon.bump{animation:heartBump .3s ease;}
+@keyframes heartBump{50%{transform:scale(1.3);}}
+
+/* ================= FALL ZONE ================= */
+.fall-zone{
+  position:relative;
+  width:100%;
+  height:62vh;
+  overflow:hidden;
+}
+
+/* ================= ROSE ================= */
+.rose{
+  position:absolute;
+  top:-140px;
+  width:70px;
+  cursor:pointer;
+  animation:fall linear forwards;
+  filter:drop-shadow(0 14px 22px rgba(0,0,0,.45));
+}
+.rose img{width:100%;display:block;pointer-events:none;}
+
+@keyframes fall{
+  from{transform:translateY(-160px) rotate(-6deg);}
+  to{transform:translateY(75vh) rotate(8deg);}
+}
+
+.rose.burst{animation:roseBurst .6s ease forwards;}
+@keyframes roseBurst{
+  0%{transform:scale(1);opacity:1;}
+  60%{transform:scale(1.4);opacity:.9;}
+  100%{transform:scale(1.9);opacity:0;}
+}
+
+/* ================= LARGER TOUCH TARGETS ================= */
+.rose::before{
+  content:"";
+  position:absolute;
+  top:-10px;
+  left:-10px;
+  right:-10px;
+  bottom:-10px;
+  border-radius:50%;
+  background:transparent;
+}
+
+/* Rose Glow Effect */
+.rose::after{
+  content:"";
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:80%;
+  height:80%;
+  background:radial-gradient(circle,rgba(255,79,163,0.4),transparent 60%);
+  border-radius:50%;
+  z-index:-1;
+  animation:roseGlow 2s ease-in-out infinite;
+}
+
+@keyframes roseGlow{
+  0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.6;}
+  50%{transform:translate(-50%,-50%) scale(1.2);opacity:0.8;}
+}
+
+/* ================= GLOW ================= */
+.glow{
+  position:absolute;
+  top:20px;
+  left:50%;
+  width:72px;
+  height:72px;
+  transform:translateX(-50%);
+  border-radius:50%;
+  border:2px solid var(--pink-soft);
+  animation:glow .6s ease forwards;
+}
+@keyframes glow{
+  from{transform:translate(-50%, -50%) scale(.6);opacity:.8;}
+  to{transform:translate(-50%, -50%) scale(1.8);opacity:0;}
+}
+
+/* Heart Burst Animation */
+.heart-burst{
+  position:absolute;
+  width:20px;
+  height:20px;
+  background:linear-gradient(135deg,var(--pink-soft),var(--gold-soft));
+  border-radius:50%;
+  animation:heartBurst .8s ease forwards;
+}
+
+@keyframes heartBurst{
+  0%{transform:translate(-50%,-50%) scale(0);opacity:1;}
+  50%{transform:translate(-50%,-50%) scale(1.2);opacity:0.8;}
+  100%{transform:translate(calc(-50% + var(--x,0) * 1px),calc(-50% + var(--y,0) * 1px)) scale(0.5);opacity:0;}
+}
+
+/* ================= FINAL OVERLAY ================= */
+#final-reveal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  z-index: 20;
+}
+
+#final-reveal.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+#final-reveal.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+#final-content {
+  background: linear-gradient(160deg, #0d0d0d 0%, #2a0000 25%, #4a0000 50%, #2a0000 75%, #0d0d0d 100%);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 1.6rem 1.6rem 1.4rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.35rem;
+  max-width: 320px;
+  max-height: calc(320px * 16 / 9);
+  width: 320px;
+  height: calc(320px * 16 / 9);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  border: 3px solid var(--gold);
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.06),
+    0 0 0 4px var(--gold-soft),
+    0 25px 60px rgba(0, 0, 0, 0.55),
+    0 0 40px rgba(139, 0, 0, 0.6),
+    0 0 40px rgba(100, 0, 0, 0.5),
+    0 0 30px rgba(200, 0, 0, 0.4),
+    inset 0 0 20px rgba(139, 0, 0, 0.3);
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#final-content, #final-content * {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#final-content::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  background: linear-gradient(135deg, #8b0000, #4a0000, #000000, #8b0000);
+  border-radius: 20px;
+  z-index: -1;
+  background-size: 200% 200%;
+}
+
+#final-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(139, 0, 0, 0.08), rgba(100, 0, 0, 0.08), transparent);
+}
+
+.card-branding {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(10, 12, 26, 0.55);
+  border: 1px solid rgba(255, 105, 180, 0.4);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  margin-bottom: 0.5rem;
+  margin-top: 0;
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.card-branding img {
+  height: 22px;
+  width: auto;
+}
+
+.card-branding span {
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  font-weight: 600;
+  font-family: var(--font-display);
+  color: #fff;
+  white-space: nowrap;
+}
+
+.pop-in {
+  animation: popIn 0.6s ease-out both;
+}
+
+
+.romantic-heading {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  color: #fff;
+  margin-bottom: 1.2rem;
+  margin-top: 20px;
+  text-shadow: none;
+}
+
+#final-content h2 {
+  color: #ff69b4;
+  margin-bottom: 0.15rem;
+  font-size: 1.6rem;
+}
+
+.receiver-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem;
+  color: #ff69b4;
+  margin-bottom: 0.2rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.sender-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  color: #ff1493;
+  position: absolute;
+  right: 16px;
+  bottom: 12px;
+  text-align: right;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.gift-box {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 15px;
+  padding: 0.7rem;
+  margin: 0.8rem 0 0.5rem;
+  border: 1px solid var(--stroke);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.25), 0 0 10px rgba(255, 105, 180, 0.1);
+  width: 100%;
+  max-width: 240px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  align-items: start;
+  height: auto;
+  min-height: 140px;
+}
+
+.message-content {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.75rem;
+  line-height: 1.3;
+  color: #333;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+/* User Photo Styles */
+.user-photo-container {
+  width: 180px;
+  height: 180px;
+  margin: 0.5rem auto;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 4px solid #ff69b4;
+  box-shadow: 0 0 25px rgba(255, 105, 180, 0.6);
+}
+
+.user-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: none;
+  background: #000;
+}
+
+/* Small Rose Styles */
+.small-rose-container {
+  text-align: center;
+  margin-bottom: 0.4rem;
+}
+
+.small-rose {
+  width: 40px;
+  height: auto;
+  opacity: 0.8;
+  filter: drop-shadow(0 2px 8px rgba(255, 105, 180, 0.4));
+}
+
+@keyframes textGlow {
+  0%, 100% { text-shadow: 0 10px 30px rgba(255, 105, 180, 0.4), 0 0 20px rgba(255, 215, 0, 0.2); }
+  50% { text-shadow: 0 10px 30px rgba(255, 105, 180, 0.6), 0 0 30px rgba(255, 215, 0, 0.4); }
+}
+
+@keyframes borderGlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Floating Hearts in Final Card */
+.floating-heart-card {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, #ff69b4, #ff1493);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  animation: floatHeartCard 6s ease-in-out infinite;
+  opacity: 0.4;
+}
+
+@keyframes floatHeartCard {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.4;
+  }
+  25% {
+    transform: translateY(-15px) rotate(90deg);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-30px) rotate(180deg);
+    opacity: 0.4;
+  }
+  75% {
+    transform: translateY(-15px) rotate(270deg);
+    opacity: 0.6;
+  }
+}
+
+.ring-container {
+  margin-bottom: 0.05rem;
+  perspective: 1000px;
+}
+
+.rotating-rose {
+  width: 130px;
+  height: auto;
+  filter: drop-shadow(0 0 22px rgba(255, 105, 180, 0.6));
+  animation: ringSpin 12s linear infinite;
+}
+
+@keyframes ringSpin {
+  from { transform: rotateY(0deg) scale(1); }
+  to { transform: rotateY(360deg) scale(1.1); }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}/* ================= PETALS ================= */
+.petal{
+  position:fixed;
+  top:-40px;
+  width:36px;
+  z-index:30;
+  pointer-events:none;
+  animation:petalFall linear forwards;
+}
+
+@keyframes petalFall{
+  to{
+    transform:translateY(110vh) rotate(240deg);
+    opacity:0;
+  }
+}
+
+/* Subtle Floating Hearts */
+.floating-heart{
+  position:fixed;
+  width:24px;
+  height:24px;
+  background:linear-gradient(135deg,var(--pink-soft),var(--gold-soft));
+  border-radius:50%;
+  pointer-events:none;
+  z-index:0;
+  animation:floatHeart 8s ease-in-out infinite;
+  opacity:0.3;
+}
+
+@keyframes floatHeart{
+  0%,100%{
+    transform:translateY(0) rotate(0deg);
+    opacity:0.3;
+  }
+  50%{
+    transform:translateY(-20px) rotate(180deg);
+    opacity:0.5;
+  }
+}
+
+/* Heart Trail Effect */
+.heart-trail{
+  position:fixed;
+  width:16px;
+  height:16px;
+  background:linear-gradient(135deg,var(--pink-soft),var(--gold-soft));
+  border-radius:50%;
+  pointer-events:none;
+  z-index:100;
+  animation:heartTrail 1.2s ease forwards;
+}
+
+@keyframes heartTrail{
+  0%{
+    transform:translate(0,0) scale(1);
+    opacity:1;
+  }
+  100%{
+    transform:translate(calc(var(--x,0) * 1px),calc(var(--y,0) * 1px)) scale(0);
+    opacity:0;
+  }
+}
+
+/* Border glow animation */
+#final-content::after {
+  animation: borderGlow 3s ease infinite;
+}
+
+@keyframes borderGlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Romantic heading */
+.romantic-heading {
+  /* No animation */
+}
+
+/* Static version for sharing */
+#final-content-static {
+  display: none;
+  background: linear-gradient(160deg, #0d0d0d 0%, #2a0000 25%, #4a0000 50%, #2a0000 75%, #0d0d0d 100%);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 1.6rem 1.6rem 1.4rem;
+  text-align: center;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.35rem;
+  max-width: 320px;
+  max-height: calc(320px * 16 / 9);
+  width: 320px;
+  height: calc(320px * 16 / 9);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  border: 3px solid var(--gold);
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.06),
+    0 0 0 4px var(--gold-soft),
+    0 25px 60px rgba(0, 0, 0, 0.55),
+    0 0 40px rgba(139, 0, 0, 0.6),
+    0 0 40px rgba(100, 0, 0, 0.5),
+    0 0 30px rgba(200, 0, 0, 0.4),
+    inset 0 0 20px rgba(139, 0, 0, 0.3);
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+#final-content-static::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  background: linear-gradient(135deg, #8b0000, #4a0000, #000000, #8b0000);
+  border-radius: 20px;
+  z-index: -1;
+  background-size: 200% 200%;
+  animation: none !important;
+}
+
+#final-content-static::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(139, 0, 0, 0.08), rgba(100, 0, 0, 0.08), transparent);
+}
+
+#final-content-static .card-branding,
+#final-content-static .romantic-heading,
+#final-content-static .receiver-name,
+#final-content-static .gift-box,
+#final-content-static .photo-frame,
+#final-content-static .sender-name,
+#final-content-static .rotating-rose {
+  animation: none !important;
+  text-shadow: none !important;
+}
+
+#final-content-static .card-branding {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  transform: none !important;
+  margin: 0 auto 0.5rem !important;
+  display: inline-flex !important;
+}
+
+#final-content-static .romantic-heading {
+  /* No text shadow */
+}
+
+
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 480px){
+  .container{padding:18px 12px 28px;}
+  h1{font-size:1.35rem;}
+  .subtitle{font-size:.9rem;}
+  .counter{font-size:.9rem;}
+  .fall-zone{height:58vh;}
+  .rose{width:58px;}
+  #final-content{
+    width:min(78vw,360px);
+    padding:28px 20px;
+    max-height:calc(100vh - 56px);
+    border-radius:22px;
+  }
+  #final-content h2{font-size:1.3rem;}
+  #final-content p{font-size:0.95rem;}
+  #finalPhoto{border-radius:14px;}
+  .gift-box {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+    min-height: auto;
+  }
+  .photo-frame {
+    width: 100px;
+    max-width: 100px;
+    margin: 0 auto;
+  }
+  .message-content {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 360px){
+  .logo{font-size:1.35rem;}
+  .tagline{font-size:.75rem;}
+  .divider{width:52px;}
+  #final-content{padding:24px 16px;}
+}
+
+@media (min-width: 768px){
+  .container{max-width:520px;}
+  .fall-zone{height:65vh;}
+  .rose{width:78px;}
+  h1{font-size:1.85rem;}
+  .subtitle{font-size:1.05rem;}
+  #final-content{width:min(44vw,420px);}
+  #final-content h2{font-size:1.7rem;}
+  #final-content p{font-size:1.05rem;}
+}
+
+/* ============ INSTAGRAM SHARE BUTTON ============ */
+.instagram-share-btn {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #F77737 100%);
+  border: none;
+  border-radius: 999px;
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(225, 48, 108, 0.4);
+  transition: all 0.3s ease;
+  z-index: 10;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.instagram-share-btn:hover {
+  transform: translateX(-50%) scale(1.05);
+  box-shadow: 0 6px 20px rgba(225, 48, 108, 0.6);
+}
+
+.instagram-share-btn:active {
+  transform: translateX(-50%) scale(0.98);
+}
+
+.instagram-share-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.instagram-share-btn .btn-icon {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.instagram-share-btn.loading {
+  pointer-events: none;
+}
+
+.instagram-share-btn.loading .btn-text::after {
+  content: " ...";
+  animation: blink 0.8s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Toast notification */
+.share-toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  z-index: 1000;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.share-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.share-toast.success {
+  background: linear-gradient(135deg, #833AB4, #E1306C);
+}
+
+.share-toast.error {
+  background: rgba(220, 53, 69, 0.9);
+}
+</style>
+</head>
+
+<body>
+<!-- Loading Screen -->
+<div id="loading-screen">
+  <div class="loading-content">
+    <div class="loading-logo">
+      <img src="/logo.png" alt="Gift On Screen" class="loading-logo-img">
+    </div>
+    <div class="loading-text">Gift On Screen</div>
+    <div class="loading-subtitle">Loading your special surprise...</div>
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+#loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-gradient);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+#loading-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-content {
+  text-align: center;
+  color: var(--text);
+}
+
+.loading-logo {
+  margin-bottom: 1.5rem;
+  animation: logoFloat 2s ease-in-out infinite;
+}
+
+.loading-logo-img {
+  width: 80px;
+  height: auto;
+  filter: drop-shadow(0 0 10px rgba(58, 108, 255, 0.5));
+}
+
+@keyframes logoFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.loading-text {
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  color: transparent;
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  margin-bottom: 0.5rem;
+  animation: textGlow 2s ease-in-out infinite;
+}
+
+.loading-subtitle {
+  font-size: 0.95rem;
+  opacity: 0.8;
+  margin-bottom: 1.5rem;
+  color: var(--pink-soft);
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+}
+
+.spinner {
+  width: 100%;
+  height: 100%;
+  border: 3px solid var(--stroke);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+</style>
+
+<script>
+// Show loading screen immediately and keep it for exactly 5 seconds
+document.addEventListener('DOMContentLoaded', function() {
+  const loadingScreen = document.getElementById('loading-screen');
+  if (loadingScreen) {
+    loadingScreen.style.opacity = '1';
+    loadingScreen.style.visibility = 'visible';
+  }
+
+  // Load data in background immediately
+  loadGiftData();
+
+  // Always hide loading screen after exactly 5 seconds
+  setTimeout(() => {
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+      loadingScreen.style.opacity = '0';
+      loadingScreen.style.visibility = 'hidden';
+      loadingScreen.style.pointerEvents = 'none';
+    }
+  }, 5000);
+});
+</script>
+
+<div class="container">
+  <div id="branding">
+<img src="/logo.png" alt="Gift On Screen" class="logo">
+    <span class="brand-name">GIFT ON SCREEN</span>
+  </div>
+  <div class="brand">
+    <div class="logo">Gift On Screen</div>
+    <div class="tagline">a thoughtful digital surprise</div>
+    <div class="divider"></div>
+  </div>
+
+  <h1>Rose Day</h1>
+  <p class="subtitle">Collect 10 falling roses</p>
+  <div class="counter" id="counter">0 / 10 roses collected</div>
+  <div class="heart-progress" id="heartProgress">
+    <div class="heart-icon"></div>
+    <div class="heart-icon"></div>
+    <div class="heart-icon"></div>
+    <div class="heart-icon"></div>
+    <div class="heart-icon"></div>
+    <div class="heart-icon"></div>
+    <div class="heart-icon"></div>
+    <div class="heart-icon"></div>
+    <div class="heart-icon"></div>
+    <div class="heart-icon"></div>
+  </div>
+
+  <div class="fall-zone" id="fallZone"></div>
+</div>
+
+<!-- FINAL OVERLAY -->
+<div id="final-reveal">
+  <div id="final-content">
+  <div id="gold-burst" aria-hidden="true"></div>
+  <div class="card-branding" aria-label="Gift On Screen branding">
+    <img src="/logo.png" alt="Gift On Screen logo">
+    <span>GIFT ON SCREEN</span>
+  </div>
+    <h2 id="final-title" class="romantic-heading">For Someone Special</h2>
+    <div class="user-photo-container" id="userPhotoContainer">
+      <img id="finalPhoto" class="user-photo">
+    </div>
+    <div class="receiver-name" id="receiverName"></div>
+    <div class="gift-box" id="messageBox">
+      <div class="small-rose-container">
+        <img src="assets/rose.png" alt="Small Rose" class="small-rose">
+      </div>
+      <div class="message-content" id="messageContent"></div>
+    </div>
+    <div class="sender-name" id="senderName"></div>
+    <button class="instagram-share-btn" id="instagramShareBtn" onclick="shareToInstagram()">
+      <svg class="btn-icon" viewBox="0 0 24 24">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+      </svg>
+      <span class="btn-text">Share on Instagram</span>
+    </button>
+  </div>
+</div>
+
+<!-- STATIC VERSION FOR SHARING -->
+<div id="final-content-static">
+  <div class="card-branding" aria-label="Gift On Screen branding">
+    <img src="/logo.png" alt="Gift On Screen logo">
+    <span>GIFT ON SCREEN</span>
+  </div>
+    <h2 id="final-title-static" class="romantic-heading">For Someone Special</h2>
+    <div class="user-photo-container">
+      <img class="user-photo">
+    </div>
+    <div class="receiver-name"></div>
+    <div class="gift-box">
+      <div class="small-rose-container">
+        <img src="assets/rose.png" alt="Small Rose" class="small-rose">
+      </div>
+      <div class="message-content"></div>
+    </div>
+    <div class="sender-name"></div>
+</div>
+
+<!-- Toast notification -->
+<div class="share-toast" id="shareToast"></div>
+<script>
+/* Prevent right-click on images */
+document.addEventListener('contextmenu', function(e) {
+  if (e.target.tagName === 'IMG') {
+    e.preventDefault();
+    return false;
+  }
+});
+
+/* Prevent long-press on mobile devices */
+document.addEventListener('touchstart', function(e) {
+  if (e.target.tagName === 'IMG') {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+/* ============ AUDIO UNLOCK ============ */
+let audioUnlocked=false;
+function unlockAudio(){
+  if(audioUnlocked) return;
+  const a=new Audio("assets/rose-tap.mp3");
+  a.volume=0;a.play().then(()=>audioUnlocked=true).catch(()=>{});
+}
+document.addEventListener("touchstart",unlockAudio,{once:true});
+document.addEventListener("click",unlockAudio,{once:true});
+
+/* ============ FLOATING HEARTS ============ */
+function createFloatingHearts(){
+  const positions=[
+    {left:'10%',top:'20%',delay:0},
+    {left:'80%',top:'30%',delay:2},
+    {left:'40%',top:'60%',delay:4}
+  ];
+
+  positions.forEach(pos=>{
+    const heart=document.createElement("div");
+    heart.className="floating-heart";
+    heart.style.left=pos.left;
+    heart.style.top=pos.top;
+    heart.style.animationDelay=pos.delay+"s";
+    document.body.appendChild(heart);
+  });
+}
+
+/* Create floating hearts on page load */
+window.addEventListener('load',createFloatingHearts);
+
+/* ============ GAME LOGIC ============ */
+const fallZone=document.getElementById("fallZone");
+const counter=document.getElementById("counter");
+const finalReveal=document.getElementById("final-reveal");
+const finalContent=document.getElementById("final-content");
+const heartProgress=document.getElementById("heartProgress");
+const heartIcons=heartProgress.querySelectorAll(".heart-icon");
+
+let count=0,done=false;
+
+function spawnRose(){
+  if(done) return;
+  const r=document.createElement("div");
+  r.className="rose";
+  r.style.left=Math.random()*80+"%";
+  const dur=5+Math.random()*2;
+  r.style.animationDuration=dur+"s";
+  r.innerHTML=`<img src="assets/rose.png">`;
+
+  r.onclick=(e)=>{
+    if(done) return;
+    if(audioUnlocked){
+      new Audio("assets/rose-tap.mp3").play().catch(()=>{});
+    }
+    count++;
+    counter.textContent=`${count} / 10 roses collected`;
+    counter.classList.add("bump");
+    setTimeout(()=>counter.classList.remove("bump"),300);
+
+    // Update heart progress
+    if(count<=10){
+      const heart=heartIcons[count-1];
+      heart.classList.add("filled");
+      heart.classList.add("bump");
+      setTimeout(()=>heart.classList.remove("bump"),300);
+    }
+
+    r.classList.add("burst");
+    
+    // Get click position
+    const clickX = e.clientX;
+    const clickY = e.clientY;
+    
+    // Create glow at click position
+    const g=document.createElement("div");
+    g.className="glow";
+    g.style.position = 'fixed';
+    g.style.left = clickX + 'px';
+    g.style.top = clickY + 'px';
+    g.style.transform = 'translate(-50%, -50%)';
+    document.body.appendChild(g);
+    
+    // Create heart bursts at click position
+    const directions=[
+      {x:20,y:-20},{x:-20,y:-20},{x:0,y:-30}
+    ];
+    for(let i=0;i<3;i++){
+      const heart=document.createElement("div");
+      heart.className="heart-burst";
+      heart.style.position = 'fixed';
+      heart.style.left = clickX + 'px';
+      heart.style.top = clickY + 'px';
+      heart.style.transform = 'translate(-50%, -50%)';
+      heart.style.animationDelay=(i*0.1)+"s";
+      const dir=directions[i]||{x:Math.random()*40-20,y:-Math.random()*40-10};
+      heart.style.setProperty("--x",dir.x);
+      heart.style.setProperty("--y",dir.y);
+      document.body.appendChild(heart);
+      setTimeout(()=>heart.remove(),800);
+    }
+    
+    // Create heart trail at click position
+    for(let i=0;i<2;i++){
+      const trail=document.createElement("div");
+      trail.className="heart-trail";
+      trail.style.left=clickX+"px";
+      trail.style.top=clickY+"px";
+      trail.style.animationDelay=(i*0.1)+"s";
+      const angle=(Math.PI*2/2)*i;
+      const distance=30;
+      trail.style.setProperty("--x",Math.cos(angle)*distance);
+      trail.style.setProperty("--y",-Math.sin(angle)*distance-20);
+      document.body.appendChild(trail);
+      setTimeout(()=>trail.remove(),1200);
+    }
+    
+    setTimeout(()=>{
+      r.remove();
+      g.remove();
+    },600);
+
+    if(count>=10){
+      done=true;
+      revealFinal();
+    }
+  };
+
+  fallZone.appendChild(r);
+  setTimeout(()=>r.remove(),dur*1000);
+}
+setInterval(spawnRose,650);
+
+/* ============ FINAL REVEAL ============ */
+function revealFinal(){
+  if(audioUnlocked){
+    new Audio("assets/reveal.mp3").play().catch(()=>{});
+  }
+  finalReveal.classList.add("show");
+  
+  // Force inject greeting when final card is revealed (for mobile)
+  const params = new URLSearchParams(window.location.search);
+  const giftId = params.get("id");
+  if (giftId) {
+    fetch("/gifts.json", { cache: "no-store" })
+      .then(res => res.json())
+      .then(data => {
+        const gift = data[giftId];
+        if (gift && gift.greeting) {
+          forceInjectGreeting(gift.greeting);
+        }
+      })
+      .catch(() => {});
+  }
+  
+  // Trigger petal animation
+  createPetalEffect();
+}
+
+/* ============ PETAL EFFECT ============ */
+function createPetalEffect() {
+  const petalCount = 20;
+  const petalImage = 'assets/petal.png'; // Make sure this image exists
+  
+  for (let i = 0; i < petalCount; i++) {
+    setTimeout(() => {
+      const petal = document.createElement('img');
+      petal.className = 'petal';
+      petal.src = petalImage;
+      petal.style.left = Math.random() * 100 + '%';
+      petal.style.animationDuration = (3 + Math.random() * 2) + 's';
+      petal.style.animationDelay = Math.random() * 0.5 + 's';
+      petal.style.width = (30 + Math.random() * 20) + 'px';
+      document.body.appendChild(petal);
+      
+      // Remove petal after animation completes
+      setTimeout(() => {
+        if (petal.parentNode) {
+          petal.parentNode.removeChild(petal);
+        }
+      }, 5000);
+    }, i * 100);
+  }
+}
+
+</script>
+<script>
+/* ============ GIFT DATA LOADING FUNCTION ============ */
+let greetingInjected = false;
+
+function forceInjectGreeting(greeting) {
+  if (greetingInjected) return;
+  greetingInjected = true;
+  
+  const text = greeting || 'For Someone Special';
+  console.log('=== forceInjectGreeting CALLED ===', text);
+  
+  // Try EVERY possible way to find and set the heading
+  const selectors = ['#final-title', '#final-title-static', '.romantic-heading', 'h2'];
+  selectors.forEach(selector => {
+    console.log('Checking selector:', selector);
+    try {
+      const elements = document.querySelectorAll(selector);
+      console.log(`Found ${elements.length} elements for selector ${selector}`);
+      
+      elements.forEach(el => {
+        if (el) {
+          console.log('Current content:', el.innerHTML, el.textContent);
+          // Always override to ensure it's set
+          el.innerHTML = text;
+          el.setAttribute('data-greeting', text);
+          console.log('Set to:', text);
+        }
+      });
+    } catch (e) {
+      console.error(`Error with selector ${selector}:`, e);
+    }
+  });
+}
+
+function loadGiftData() {
+  const params = new URLSearchParams(window.location.search);
+  const giftId = params.get("id");
+  console.log('loadGiftData called with giftId:', giftId);
+  
+  // Skip if no gift id
+  if (!giftId) {
+    return;
+  }
+
+  // Load data in background
+  fetch("/gifts.json", { cache: "no-store" })
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      return res.json();
+    })
+    .then(data => {
+      console.log('Gifts data loaded:', data);
+      const gift = data[giftId];
+
+      if (!gift) {
+        console.warn(`Gift with ID ${giftId} not found`);
+        return;
+      }
+
+      console.log('Found gift:', gift);
+      
+      // Force inject greeting immediately
+      forceInjectGreeting(gift.greeting);
+      
+      // Retry injection at reasonable intervals (no infinite loop)
+      const retryIntervals = [500, 1500, 3000];
+      retryIntervals.forEach(delay => {
+        setTimeout(() => {
+          console.log(`Retry injection after ${delay}ms`);
+          forceInjectGreeting(gift.greeting);
+        }, delay);
+      });
+
+      // Populate animated card
+      const receiverEl = document.getElementById("receiverName");
+      const messageEl  = document.getElementById("messageContent");
+      const photoEl    = document.getElementById("finalPhoto");
+      const senderEl = document.getElementById("senderName");
+
+      if (senderEl && gift.sender) {
+        senderEl.innerHTML = gift.sender;
+      }
+
+      if (receiverEl && gift.receiver) {
+        receiverEl.innerHTML = gift.receiver;
+      }
+
+      if (messageEl && gift.message) {
+        messageEl.innerHTML = gift.message.replace(/\n/g, "<br>");
+      }
+
+      if (photoEl && gift.photo) {
+        photoEl.src = `/assets/photos/${gift.photo}`;
+        photoEl.style.display = "block";
+      }
+
+      // Populate static card
+      const staticCard = document.getElementById("final-content-static");
+      const staticReceiver = staticCard.querySelector(".receiver-name");
+      const staticMessage = staticCard.querySelector(".message-content");
+      const staticPhoto = staticCard.querySelector(".user-photo");
+      const staticSender = staticCard.querySelector(".sender-name");
+
+      if (staticReceiver && gift.receiver) {
+        staticReceiver.innerHTML = gift.receiver;
+      }
+
+      if (staticMessage && gift.message) {
+        staticMessage.innerHTML = gift.message.replace(/\n/g, "<br>");
+      }
+
+      if (staticPhoto && gift.photo) {
+        staticPhoto.src = `/assets/photos/${gift.photo}`;
+        staticPhoto.style.display = "block";
+      }
+
+      if (staticSender && gift.sender) {
+        staticSender.innerHTML = gift.sender;
+      }
+    })
+    .catch(error => {
+      console.error('Error loading gift data:', error);
+    });
+}
+</script>
+
+<script>
+/* ============ INSTAGRAM SHARE FUNCTIONALITY ============ */
+async function shareToInstagram() {
+  const btn = document.getElementById('instagramShareBtn');
+  const toast = document.getElementById('shareToast');
+  const staticCard = document.getElementById('final-content-static');
+  
+  // Show loading state
+  btn.classList.add('loading');
+  btn.disabled = true;
+  showToast('Capturing your card...', '');
+  
+  try {
+    // Check if html2canvas is loaded
+    if (typeof html2canvas !== 'function') {
+      throw new Error('html2canvas library not loaded');
+    }
+    
+    // Temporarily show static card for capture (off-screen)
+    staticCard.style.display = 'flex';
+    staticCard.style.position = 'fixed';
+    staticCard.style.left = '-9999px';
+    staticCard.style.top = '-9999px';
+    staticCard.style.zIndex = '9999';
+    
+    // Capture the static content as canvas
+    const canvas = await html2canvas(staticCard, {
+      backgroundColor: null,
+      scale: 2, // Higher quality
+      useCORS: true,
+      allowTaint: true,
+      logging: false
+    });
+    
+    // Hide static card again
+    staticCard.style.display = 'none';
+    
+    // Convert canvas to blob
+    const blob = await new Promise(resolve => {
+      canvas.toBlob(resolve, 'image/png', 0.95);
+    });
+    
+    // Create file from blob
+    const file = new File([blob], 'gift-on-screen.png', { type: 'image/png' });
+    
+    // Try Instagram intent first on Android
+    const isAndroid = navigator.userAgent.toLowerCase().includes('android');
+    if (isAndroid) {
+      try {
+        // Convert blob to data URL for Instagram intent
+        const dataUrl = canvas.toDataURL('image/png');
+        
+        // Try to open Instagram Stories intent
+        const shareUrl = `intent://#Intent;package=com.instagram.android;action=com.instagram.share.ADD_TO_STORY;S.uri=${encodeURIComponent(dataUrl)};end`;
+        
+        // Create hidden iframe to test intent
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = shareUrl;
+        document.body.appendChild(iframe);
+        
+        // Wait for iframe to load or time out
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        document.body.removeChild(iframe);
+        
+        // If we got here, intent failed - continue to Web Share API
+      } catch (intentError) {
+        console.warn('Instagram intent failed:', intentError);
+        // Continue to Web Share API
+      }
+    }
+    
+    // Check if Web Share API is supported with file sharing
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      // Use Web Share API (opens native Android share sheet)
+      await navigator.share({
+        title: 'A Special Gift For You 💝',
+        text: 'Someone sent you a beautiful surprise! Open it to see what they crafted with love.',
+        files: [file]
+      });
+      
+      showToast('Shared successfully! 🎉', 'success');
+    } else {
+      // Fallback: Download the image
+      const link = document.createElement('a');
+      link.download = 'gift-on-screen.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      
+      showToast('Image downloaded! Open Instagram and share', '');
+    }
+    
+  } catch (error) {
+    console.error('Share error:', error);
+    
+    // Hide static card if it's still visible
+    const staticCardElement = document.getElementById('final-content-static');
+    if (staticCardElement) {
+      staticCardElement.style.display = 'none';
+    }
+    
+    // Fallback to download animated version
+    try {
+      const finalContent = document.getElementById('final-content');
+      const canvas = await html2canvas(finalContent, {
+        backgroundColor: null,
+        scale: 2,
+        useCORS: true,
+        allowTaint: true
+      });
+      
+      const link = document.createElement('a');
+      link.download = 'gift-on-screen.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      
+      showToast('Image downloaded! Share on Instagram 📤', '');
+    } catch (downloadError) {
+      showToast('Could not capture image. Try screenshotting!', 'error');
+    }
+  } finally {
+    // Remove loading state
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+}
+
+// Toast notification helper
+function showToast(message, type) {
+  const toast = document.getElementById('shareToast');
+  toast.textContent = message;
+  toast.className = 'share-toast show ' + type;
+  
+  // Auto hide after 4 seconds
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 4000);
+}
+</script>
+</body>
+</html>

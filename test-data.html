@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Data Injection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gifts Data Injection Test</h1>
+        
+        <div class="test-section">
+            <h2>Test 1: Direct Data Access</h2>
+            <button onclick="testDirectDataAccess()">Get Gift Data from JSON</button>
+            <div id="direct-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>Test 2: URL Parameters</h2>
+            <button onclick="testUrlParams()">Get Current URL Parameters</button>
+            <div id="url-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>Test 3: Heart Template Loading</h2>
+            <p>Test the heart template with GIFT003:</p>
+            <a href="templates/heart/index.html?id=GIFT003" target="_blank">Open Heart Template (GIFT003)</a>
+        </div>
+    </div>
+
+    <script>
+        // Test 1: Direct data access
+        function testDirectDataAccess() {
+            const resultDiv = document.getElementById('direct-result');
+            resultDiv.innerHTML = '<p>Loading...</p>';
+            
+            fetch('gifts.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('gifts.json data:', data);
+                    resultDiv.innerHTML = `
+                        <p class="success">Successfully loaded gifts.json</p>
+                        <p><strong>Total gifts:</strong> ${Object.keys(data).length}</p>
+                        <p><strong>GIFT003 details:</strong></p>
+                        <pre>${JSON.stringify(data.GIFT003, null, 2)}</pre>
+                    `;
+                })
+                .catch(error => {
+                    console.error('Error loading gifts.json:', error);
+                    resultDiv.innerHTML = `<p class="error">Error loading gifts.json: ${error.message}</p>`;
+                });
+        }
+
+        // Test 2: URL parameters
+        function testUrlParams() {
+            const resultDiv = document.getElementById('url-result');
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+            
+            resultDiv.innerHTML = `
+                <p>Current URL: <strong>${window.location.href}</strong></p>
+                <p>ID parameter: <strong>${id || 'null'}</strong></p>
+                <p>All parameters:</p>
+                <pre>${JSON.stringify(Object.fromEntries(urlParams), null, 2)}</pre>
+            `;
+        }
+
+        // Run tests on load
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Testing page loaded');
+            // Test URL params
+            testUrlParams();
+        });
+    </script>
+</body>
+</html>

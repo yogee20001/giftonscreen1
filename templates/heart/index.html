@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heart Reveal Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --ink: #06060c;
+  --night: #0b1024;
+  --midnight: #111432;
+  --blue: #3a6cff;
+  --blue-soft: #8cb6ff;
+  --pink: #ff4fa3;
+  --pink-soft: #ff9acb;
+  --gold: #ffd700;
+  --gold-soft: #ffe066;
+  --text: #f8f3f7;
+  --stroke: rgba(255, 255, 255, 0.12);
+  --shadow-blue: rgba(58, 108, 255, 0.28);
+  --shadow-pink: rgba(255, 79, 163, 0.24);
+  --brand-gradient: linear-gradient(120deg, var(--blue-soft), var(--pink-soft));
+  --bg-gradient:
+    radial-gradient(640px 420px at 12% 10%, rgba(58, 108, 255, 0.35), transparent 60%),
+    radial-gradient(560px 420px at 88% 16%, rgba(255, 79, 163, 0.35), transparent 62%),
+    linear-gradient(135deg, #05060b 0%, #0b1024 45%, #1a0f22 75%, #07080f 100%);
+  --font-display: "Playfair Display", serif;
+  --font-sans: "Manrope", sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-gradient);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Prevent image selection and dragging */
+img {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  pointer-events: none;
+}
+
+#game-container {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+#title {
+  font-size: 2.5rem;
+  color: transparent;
+  margin-bottom: 0.15rem;
+  font-weight: bold;
+  font-family: var(--font-display);
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  text-shadow: 0 0 30px rgba(0, 0, 0, 0.45);
+}
+
+#instruction {
+  color: var(--text);
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  opacity: 0.8;
+  position: relative;
+  animation: glow 2s ease-in-out infinite, slide 3s ease-in-out infinite;
+}
+
+#branding {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 20;
+  opacity: 0.95;
+  transition: opacity 0.3s ease;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(10, 12, 26, 0.6);
+  border: 1px solid var(--stroke);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+#branding:hover {
+  opacity: 1;
+}
+
+.logo {
+  height: 48px;
+  width: auto;
+  transition: transform 0.3s ease;
+}
+
+#branding:hover .logo {
+  transform: scale(1.15);
+}
+
+.brand-name {
+  font-size: 0.9rem;
+  letter-spacing: 3px;
+  font-weight: 600;
+  color: transparent;
+  font-family: var(--font-display);
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+}
+
+#branding:hover .brand-name {
+  filter: brightness(1.1);
+}
+
+@keyframes glow {
+  0%, 100% { text-shadow: 0 0 12px rgba(140, 182, 255, 0.6); }
+  50% { text-shadow: 0 0 22px rgba(255, 154, 203, 0.75), 0 0 34px rgba(58, 108, 255, 0.4); }
+}
+
+@keyframes slide {
+  0%, 100% { transform: translateX(0) rotateX(0deg) rotateY(0deg); }
+  25% { transform: translateX(10px) rotateX(5deg) rotateY(5deg); }
+  75% { transform: translateX(-10px) rotateX(-5deg) rotateY(-5deg); }
+}
+
+#heart-container {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+}
+
+#heart-base {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#heart-cover {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: opacity 0.3s ease;
+}
+
+#counter {
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 3rem;
+  color: var(--pink-soft);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#final-reveal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  z-index: 1000;
+}
+
+#final-content {
+  background: linear-gradient(160deg, #0d0d0d 0%, #2a0000 25%, #4a0000 50%, #2a0000 75%, #0d0d0d 100%);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 1.6rem 1.6rem 1.4rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.35rem;
+  max-width: 320px;
+  max-height: calc(320px * 16 / 9);
+  width: 320px;
+  height: calc(320px * 16 / 9);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  border: 3px solid var(--gold);
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.06),
+    0 0 0 4px var(--gold-soft),
+    0 25px 60px rgba(0, 0, 0, 0.55),
+    0 0 40px rgba(139, 0, 0, 0.6),
+    0 0 40px rgba(100, 0, 0, 0.5),
+    0 0 30px rgba(200, 0, 0, 0.4),
+    inset 0 0 20px rgba(139, 0, 0, 0.3);
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+#final-content, #final-content * {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.card-branding {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(10, 12, 26, 0.55);
+  border: 1px solid var(--stroke);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  margin-bottom: 0.5rem;
+  margin-top: 0;
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.card-branding img {
+  height: 22px;
+  width: auto;
+}
+
+.card-branding span {
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  font-weight: 600;
+  font-family: var(--font-display);
+  color: transparent;
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  white-space: nowrap;
+}
+
+.pop-in {
+  animation: popIn 0.6s ease-out both;
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.6) translateY(20px);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.05) translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+#gold-burst {
+  position: absolute;
+  inset: -40px;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 5;
+}
+
+.gold-particle {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.3);
+  filter: drop-shadow(0 0 10px rgba(230, 200, 122, 0.6));
+  animation: goldBurst 2.4s ease-out forwards;
+}
+
+@keyframes goldBurst {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.2);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--x), var(--y)) scale(1.1) rotate(var(--r));
+  }
+}
+
+#final-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(140, 182, 255, 0.18), rgba(255, 154, 203, 0.18), transparent);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+#final-content h2 {
+  color: var(--pink-soft);
+  margin-bottom: 0.15rem;
+  font-size: 1.6rem;
+  animation: fadeInUp 1s ease-out;
+}
+
+.romantic-heading {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.7rem;
+  color: transparent;
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  margin-bottom: 0.8rem;
+  margin-top: 40px;
+  animation: fadeInUp 1s ease-out;
+}
+
+.receiver-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem;
+  color: var(--pink-soft);
+  margin-bottom: 0.2rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+.sender-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  color: var(--blue-soft);
+  margin-top: 0.35rem;
+  align-self: flex-end;
+  text-align: right;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  animation: fadeInUp 1s ease-out 0.6s both;
+}
+
+#final-content p {
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+#final-content .sender {
+  color: var(--pink-soft);
+  font-style: italic;
+  margin-top: 1rem;
+  animation: fadeInUp 1s ease-out 0.6s both;
+}
+
+#final-content .emotional-line {
+  font-size: 1.2rem;
+  color: var(--blue-soft);
+  margin: 1rem 0;
+  opacity: 0.9;
+  animation: fadeInUp 1s ease-out 0.9s both;
+}
+
+#final-content .heart-icon {
+  font-size: 3rem;
+  color: var(--pink);
+  margin: 1rem 0;
+  animation: pulse 2s infinite;
+}
+
+/* User Photo Styles */
+.user-photo-container {
+  width: 180px;
+  height: 180px;
+  margin: 0.5rem auto;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 4px solid #ff69b4;
+  box-shadow: 0 0 25px rgba(255, 105, 180, 0.6);
+}
+
+.user-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: none;
+  background: #000;
+}
+
+/* Small Rose Styles */
+.small-rose-container {
+  text-align: center;
+  margin-bottom: 0.4rem;
+}
+
+.small-rose {
+  width: 40px;
+  height: auto;
+  opacity: 0.8;
+  filter: drop-shadow(0 2px 8px rgba(255, 105, 180, 0.4));
+}
+
+.gift-box {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 15px;
+  padding: 0.7rem;
+  margin: 0.8rem 0 0.5rem;
+  border: 1px solid var(--stroke);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.25), 0 0 10px rgba(255, 105, 180, 0.1);
+  width: 100%;
+  max-width: 240px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  align-items: start;
+  height: auto;
+  min-height: 140px;
+}
+
+.message-content {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.75rem;
+  line-height: 1.3;
+  color: #333;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  #title {
+    font-size: 2rem;
+  }
+  
+  #instruction {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  #heart-container {
+    width: 250px;
+    height: 250px;
+  }
+  
+  #counter {
+    font-size: 2.5rem;
+    top: -40px;
+  }
+  
+  .gift-box {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+    min-height: auto;
+    max-width: 220px;
+  }
+  
+  .message-content {
+    font-size: 0.75rem;
+  }
+  
+  #final-content {
+    width: 90vw;
+    height: auto;
+    padding: 1.5rem 1rem;
+  }
+  
+  #finalPhoto {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+@media (max-width: 360px) {
+  #title {
+    font-size: 1.75rem;
+  }
+  
+  #heart-container {
+    width: 200px;
+    height: 200px;
+  }
+  
+  #counter {
+    font-size: 2rem;
+    top: -35px;
+  }
+  
+  .gift-box {
+    max-width: 200px;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.heartbeat {
+  animation: heartbeat 0.9s ease-in-out infinite;
+  filter: drop-shadow(0 0 18px rgba(255, 154, 203, 0.55));
+}
+
+@keyframes heartbeat {
+  0% { transform: scale(1); }
+  15% { transform: scale(1.1); }
+  30% { transform: scale(0.98); }
+  45% { transform: scale(1.16); }
+  60% { transform: scale(1); }
+  100% { transform: scale(1); }
+}
+
+.particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--pink-soft);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: float 2s ease-out forwards;
+}
+
+@keyframes float {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--x), var(--y)) scale(0);
+    opacity: 0;
+  }
+}
+
+.glow-effect {
+  filter: brightness(1.2) drop-shadow(0 0 20px rgba(58, 108, 255, 0.5));
+  animation: pulse 0.3s ease;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* ============ INSTAGRAM SHARE BUTTON ============ */
+.instagram-share-btn {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #F77737 100%);
+  border: none;
+  border-radius: 999px;
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(225, 48, 108, 0.4);
+  transition: all 0.3s ease;
+  z-index: 10;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.instagram-share-btn:hover {
+  transform: translateX(-50%) scale(1.05);
+  box-shadow: 0 6px 20px rgba(225, 48, 108, 0.6);
+}
+
+.instagram-share-btn:active {
+  transform: translateX(-50%) scale(0.98);
+}
+
+.instagram-share-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.instagram-share-btn .btn-icon {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.instagram-share-btn.loading {
+  pointer-events: none;
+}
+
+.instagram-share-btn.loading .btn-text::after {
+  content: " ...";
+  animation: blink 0.8s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Toast notification */
+.share-toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  z-index: 1000;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.share-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.share-toast.success {
+  background: linear-gradient(135deg, #833AB4, #E1306C);
+}
+
+.share-toast.error {
+  background: rgba(220, 53, 69, 0.9);
+}
+
+/* Static version for sharing */
+#final-content-static {
+  display: none;
+  background: linear-gradient(160deg, #0d0d0d 0%, #2a0000 25%, #4a0000 50%, #2a0000 75%, #0d0d0d 100%);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 1.6rem 1.6rem 1.4rem;
+  text-align: center;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.35rem;
+  max-width: 320px;
+  max-height: calc(320px * 16 / 9);
+  width: 320px;
+  height: calc(320px * 16 / 9);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  border: 3px solid var(--gold);
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.06),
+    0 0 0 4px var(--gold-soft),
+    0 25px 60px rgba(0, 0, 0, 0.55),
+    0 0 40px rgba(139, 0, 0, 0.6),
+    0 0 40px rgba(100, 0, 0, 0.5),
+    0 0 30px rgba(200, 0, 0, 0.4),
+    inset 0 0 20px rgba(139, 0, 0, 0.3);
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+#final-content-static::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  background: linear-gradient(135deg, #8b0000, #4a0000, #000000, #8b0000);
+  border-radius: 20px;
+  z-index: -1;
+  background-size: 200% 200%;
+  animation: none !important;
+}
+
+#final-content-static::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(139, 0, 0, 0.08), rgba(100, 0, 0, 0.08), transparent);
+}
+
+#final-content-static .card-branding,
+#final-content-static .romantic-heading,
+#final-content-static .receiver-name,
+#final-content-static .gift-box,
+#final-content-static .photo-frame,
+#final-content-static .sender-name,
+#final-content-static .rotating-ring {
+  animation: none !important;
+  text-shadow: none !important;
+}
+
+#final-content-static .card-branding {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  transform: none !important;
+  margin: 0 auto 0.5rem !important;
+  display: inline-flex !important;
+}
+
+#final-content-static .romantic-heading {
+  /* No text shadow */
+}
+
+/* Floating Hearts in Final Card */
+.floating-heart-card {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, #ff69b4, #ff1493);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  animation: floatHeartCard 6s ease-in-out infinite;
+  opacity: 0.4;
+}
+
+@keyframes floatHeartCard {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.4;
+  }
+  25% {
+    transform: translateY(-15px) rotate(90deg);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-30px) rotate(180deg);
+    opacity: 0.4;
+  }
+  75% {
+    transform: translateY(-15px) rotate(270deg);
+    opacity: 0.6;
+  }
+}
+
+/* Border glow animation */
+#final-content::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  background: linear-gradient(135deg, #8b0000, #4a0000, #000000, #8b0000);
+  border-radius: 20px;
+  z-index: -1;
+  background-size: 200% 200%;
+  animation: borderGlow 3s ease infinite;
+}
+
+@keyframes borderGlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+</style>
+</head>
+<body>
+<div id="branding">
+<img src="/logo.png" alt="Gift On Screen" class="logo">
+  <span class="brand-name">GIFT ON SCREEN</span>
+</div>
+
+<div id="game-container">
+  <h1 id="title">Reveal the Secret</h1>
+  <p id="instruction">Tap the heart to uncover what's inside</p>
+  
+  <div id="heart-container">
+    <img id="heart-base" src="assets/heart/heart-base.webp" alt="Heart Base">
+    <img id="heart-cover" src="assets/heart/cover-1.webp" alt="Heart Cover">
+    <div id="counter">0</div>
+  </div>
+</div>
+
+<div id="final-reveal">
+  <div id="final-content">
+  <div id="gold-burst" aria-hidden="true"></div>
+  <div class="card-branding" aria-label="Gift On Screen branding">
+    <img src="/logo.png" alt="Gift On Screen logo">
+    <span>GIFT ON SCREEN</span>
+  </div>
+    <h2 id="final-title" class="romantic-heading">For Someone Special</h2>
+    <div class="user-photo-container" id="userPhotoContainer">
+      <img id="finalPhoto" class="user-photo">
+    </div>
+    <div class="receiver-name" id="receiverName"></div>
+    <div class="gift-box" id="messageBox">
+      <div class="small-rose-container">
+        <img src="assets/rose.png" alt="Small Rose" class="small-rose">
+      </div>
+      <div class="message-content" id="messageContent"></div>
+    </div>
+    <div class="sender-name" id="senderName"></div>
+    <button class="instagram-share-btn" id="instagramShareBtn" onclick="shareToInstagram()">
+      <svg class="btn-icon" viewBox="0 0 24 24">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+      </svg>
+      <span class="btn-text">Share on Instagram</span>
+    </button>
+  </div>
+</div>
+
+<!-- STATIC VERSION FOR SHARING -->
+<div id="final-content-static">
+  <div class="card-branding" aria-label="Gift On Screen branding">
+    <img src="/logo.png" alt="Gift On Screen logo">
+    <span>GIFT ON SCREEN</span>
+  </div>
+    <h2 id="final-title-static" class="romantic-heading">For Someone Special</h2>
+    <div class="user-photo-container">
+      <img class="user-photo">
+    </div>
+    <div class="receiver-name"></div>
+    <div class="gift-box">
+      <div class="small-rose-container">
+        <img src="assets/rose.png" alt="Small Rose" class="small-rose">
+      </div>
+      <div class="message-content"></div>
+    </div>
+    <div class="sender-name"></div>
+</div>
+
+<!-- Toast notification -->
+<div class="share-toast" id="shareToast"></div>
+
+<script>
+/* Prevent right-click on images */
+document.addEventListener('contextmenu', function(e) {
+  if (e.target.tagName === 'IMG') {
+    e.preventDefault();
+    return false;
+  }
+});
+
+/* Prevent long-press on mobile devices */
+document.addEventListener('touchstart', function(e) {
+  if (e.target.tagName === 'IMG') {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+// Game configuration
+const TAPS_PER_HEART = 5;
+const TOTAL_HEARTS = 5;
+let currentTaps = 0;
+let currentHeart = 1;
+let tapsOnCurrentHeart = 0;
+let gameActive = true;
+let giftData = null; // Global variable to store gift data
+
+// Initialize data loading
+document.addEventListener('DOMContentLoaded', () => {
+  loadGiftData();
+  updateInstruction();
+});
+
+// Update instruction text
+function updateInstruction() {
+  const instruction = document.getElementById('instruction');
+  instruction.textContent = `Heart ${currentHeart} of ${TOTAL_HEARTS} - Tap ${TAPS_PER_HEART} times`;
+}
+
+// Get DOM elements
+const heartContainer = document.getElementById('heart-container');
+const heartCover = document.getElementById('heart-cover');
+const counter = document.getElementById('counter');
+const finalReveal = document.getElementById('final-reveal');
+const finalTitle = document.getElementById('final-title');
+const finalMessage = document.getElementById('messageContent');
+const finalSender = document.getElementById('senderName');
+const finalContent = document.getElementById('final-content');
+
+// Function to create tap particles
+function createParticles(x, y) {
+  for (let i = 0; i < 5; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    particle.style.left = x + 'px';
+    particle.style.top = y + 'px';
+    particle.style.setProperty('--x', `${(Math.random() - 0.5) * 100}px`);
+    particle.style.setProperty('--y', `${(Math.random() - 0.5) * 100}px`);
+    heartContainer.appendChild(particle);
+
+    setTimeout(() => {
+      particle.remove();
+    }, 2000);
+  }
+}
+
+// Function to update heart cover image
+function updateHeartCover() {
+  // Show the appropriate cover for current heart (covers 1-5 correspond to hearts 1-5)
+  heartCover.src = `assets/heart/cover-${currentHeart}.webp`;
+}
+
+// Function to transition to next heart
+function transitionToNextHeart() {
+  // Hide heart container
+  heartContainer.style.opacity = '0';
+  
+  setTimeout(() => {
+    // Increment heart count
+    currentHeart++;
+    tapsOnCurrentHeart = 0;
+    
+    // Reset counter
+    counter.textContent = '0';
+    
+    // Update instruction text
+    updateInstruction();
+    
+    // Show next heart cover
+    updateHeartCover();
+    
+    // Show heart container
+    heartContainer.style.opacity = '1';
+  }, 500);
+}
+
+// Function to show countdown with heart
+function showCountdownWithHeart() {
+  gameActive = false;
+  console.log("All hearts completed, showing countdown with heart");
+  
+  // Hide game elements
+  document.getElementById('title').style.display = 'none';
+  document.getElementById('instruction').style.display = 'none';
+  document.getElementById('game-container').style.display = 'none';
+  heartContainer.style.display = 'none';
+  counter.style.display = 'none';
+
+  // Create countdown container
+  const countdownContainer = document.createElement('div');
+  countdownContainer.id = 'countdown-container';
+  countdownContainer.style.cssText = `
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 2000;
+  `;
+
+  // Create countdown timer
+  const countdown = document.createElement('div');
+  countdown.id = 'countdown-timer';
+  countdown.style.cssText = `
+    font-size: 3rem;
+    color: #E6C87A;
+    margin-bottom: 0.15rem;
+    animation: pulse 1s infinite;
+  `;
+  countdown.textContent = '5';
+
+  // Create beating heart
+  const beatingHeart = document.createElement('img');
+  beatingHeart.id = 'beating-heart';
+  beatingHeart.src = 'assets/heart/heart-base.webp';
+  beatingHeart.alt = 'Beating Heart';
+  beatingHeart.className = 'heartbeat';
+  beatingHeart.style.cssText = `
+    width: 450px;
+    height: auto;
+    animation: heartbeat 0.9s ease-in-out infinite;
+    filter: drop-shadow(0 0 18px rgba(255, 154, 203, 0.55));
+  `;
+
+  // Add elements to container
+  countdownContainer.appendChild(countdown);
+  countdownContainer.appendChild(beatingHeart);
+
+  // Add container to body
+  document.body.appendChild(countdownContainer);
+
+  // Start countdown
+  let timeLeft = 5;
+  const timer = setInterval(() => {
+    timeLeft--;
+    countdown.textContent = timeLeft;
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      // Complete the countdown, remove container, and show final card
+      document.body.removeChild(countdownContainer);
+      showFinalComplete();
+    }
+  }, 1000);
+}
+
+// Function to show final reveal
+function showFinal() {
+  showCountdownWithHeart();
+}
+
+// Function to show final complete screen
+function showFinalComplete() {
+  // Hide second heart container if it exists
+  const secondHeartContainer = document.getElementById('second-heart-container');
+  if (secondHeartContainer) {
+    document.body.removeChild(secondHeartContainer);
+  }
+
+  // Show final reveal
+  finalReveal.style.opacity = '1';
+  finalReveal.style.pointerEvents = 'all';
+  finalReveal.style.transform = 'scale(1)';
+
+  // Pop-in animation for final card
+  if (finalContent) {
+    finalContent.classList.remove('pop-in');
+    void finalContent.offsetWidth;
+    finalContent.classList.add('pop-in');
+  }
+
+  // Trigger golden burst effect
+  triggerGoldBurst();
+
+  // Update final content with gift data using globally stored data
+  if (giftData) {
+    console.log('Using stored gift data:', giftData);
+    // Set greeting (from gifts.json, not hardcoded)
+    if (giftData.greeting && finalTitle) {
+      finalTitle.textContent = giftData.greeting;
+    }
+    // Set message (from gifts.json, not hardcoded)
+    if (giftData.message && finalMessage) {
+      finalMessage.innerHTML = giftData.message.replace(/\n/g, '<br>');
+    }
+    // Set receiver
+    if (giftData.receiver && document.getElementById('receiverName')) {
+      document.getElementById('receiverName').textContent = giftData.receiver;
+    }
+    // Set sender
+    if (giftData.sender && document.getElementById('senderName')) {
+      document.getElementById('senderName').textContent = giftData.sender;
+    }
+    // Set photo
+    if (giftData.photo && document.getElementById('finalPhoto')) {
+      const photoPath = `/assets/photos/${giftData.photo}`;
+      document.getElementById('finalPhoto').src = photoPath;
+      document.getElementById('finalPhoto').style.display = 'block';
+    }
+  } else {
+    // Fallback if data not already loaded
+    console.log('Gift data not available, fetching again...');
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    if (id) {
+      fetch('/gifts.json', { cache: 'no-store' })
+        .then(response => response.json())
+        .then(data => {
+          const gift = data[id];
+          if (gift) {
+            // Set all fields
+            if (gift.greeting && finalTitle) {
+              finalTitle.textContent = gift.greeting;
+            }
+            if (gift.message && finalMessage) {
+              finalMessage.innerHTML = gift.message.replace(/\n/g, '<br>');
+            }
+            if (gift.receiver && document.getElementById('receiverName')) {
+              document.getElementById('receiverName').textContent = gift.receiver;
+            }
+            if (gift.sender && document.getElementById('senderName')) {
+              document.getElementById('senderName').textContent = gift.sender;
+            }
+            if (gift.photo && document.getElementById('finalPhoto')) {
+              const photoPath = `/assets/photos/${gift.photo}`;
+              document.getElementById('finalPhoto').src = photoPath;
+              document.getElementById('finalPhoto').style.display = 'block';
+            }
+          }
+        })
+        .catch(error => {
+          console.error('Error loading gift data for final reveal:', error);
+        });
+    }
+  }
+}
+
+// Golden burst effect using gold-particle.webp
+function triggerGoldBurst(originX, originY) {
+  const burstLayer = document.getElementById('gold-burst');
+  if (!burstLayer) return;
+
+  burstLayer.innerHTML = '';
+  let centerX = burstLayer.clientWidth / 2;
+  let centerY = burstLayer.clientHeight / 2;
+  if (typeof originX === 'number' && typeof originY === 'number') {
+    centerX = originX;
+    centerY = originY;
+  }
+  const particles = 28;
+
+  for (let i = 0; i < particles; i++) {
+    const p = document.createElement('img');
+    p.className = 'gold-particle';
+    p.src = 'assets/fx/gold-particle.webp';
+    p.alt = '';
+    p.style.left = `${centerX}px`;
+    p.style.top = `${centerY}px`;
+    const angle = (Math.PI * 2 * i) / particles;
+    const radius = 140 + Math.random() * 80;
+    const x = centerX + Math.cos(angle) * radius;
+    const y = centerY + Math.sin(angle) * radius;
+    const rotate = (Math.random() * 360 - 180).toFixed(0);
+    p.style.setProperty('--x', `${x}px`);
+    p.style.setProperty('--y', `${y}px`);
+    p.style.setProperty('--r', `${rotate}deg`);
+    p.style.animationDelay = `${Math.random() * 0.15}s`;
+    p.style.width = `${24 + Math.random() * 20}px`;
+    p.style.height = p.style.width;
+    burstLayer.appendChild(p);
+  }
+
+  setTimeout(() => {
+    burstLayer.innerHTML = '';
+  }, 2800);
+}
+
+// Handle tap events
+function handleTap(event) {
+  if (!gameActive) return;
+
+  event.preventDefault();
+
+  currentTaps++;
+  tapsOnCurrentHeart++;
+  counter.textContent = tapsOnCurrentHeart;
+
+  // Get coordinates based on event type
+  let clientX, clientY;
+  if (event.touches && event.touches.length > 0) {
+    // Touch event - use first touch
+    clientX = event.touches[0].clientX;
+    clientY = event.touches[0].clientY;
+  } else if (event.changedTouches && event.changedTouches.length > 0) {
+    // Touch end event - use changed touch
+    clientX = event.changedTouches[0].clientX;
+    clientY = event.changedTouches[0].clientY;
+  } else {
+    // Mouse event
+    clientX = event.clientX;
+    clientY = event.clientY;
+  }
+
+  // Debug: Log positions
+  console.log("Event coordinates:", clientX, clientY);
+  const rect = heartContainer.getBoundingClientRect();
+  console.log("Heart container rect:", rect);
+  
+  // Calculate relative position within heart container
+  const x = clientX - rect.left;
+  const y = clientY - rect.top;
+  console.log("Calculated particle position:", x, y);
+
+  // Create particles at tap position
+  createParticles(x, y);
+  
+  // Add glow effect
+  heartContainer.classList.add('glow-effect');
+  setTimeout(() => {
+    heartContainer.classList.remove('glow-effect');
+  }, 300);
+  
+  // Update heart cover
+  updateHeartCover();
+  
+  // Check if current heart is complete
+  if (tapsOnCurrentHeart >= TAPS_PER_HEART) {
+    // If there are more hearts, transition to next heart
+    if (currentHeart < TOTAL_HEARTS) {
+      transitionToNextHeart();
+    } else {
+      // All hearts completed, show final card
+      showFinal();
+    }
+  }
+}
+
+// Add event listeners - use both touchstart and touchend for mobile
+heartContainer.addEventListener('click', handleTap);
+heartContainer.addEventListener('touchstart', handleTap);
+heartContainer.addEventListener('touchend', handleTap);
+
+// Initialize game
+console.log('Heart Reveal Game initialized');
+console.log(`Total taps needed: ${TAPS_PER_HEART * TOTAL_HEARTS}`);
+
+// Trigger burst when tapping final gift card
+if (finalContent) {
+  const burstAtEvent = (event) => {
+    if (finalReveal.style.opacity !== '1') return;
+    const rect = finalContent.getBoundingClientRect();
+    const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+    const clientY = event.touches ? event.touches[0].clientY : event.clientY;
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    triggerGoldBurst(x, y);
+  };
+
+  finalContent.addEventListener('click', burstAtEvent);
+  finalContent.addEventListener('touchstart', burstAtEvent);
+}
+
+// Load gift data from gifts.json
+loadGiftData();
+
+// Function to load gift data
+function loadGiftData() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const id = urlParams.get('id');
+
+  if (!id) {
+    console.log('No gift ID provided in URL');
+    return;
+  }
+
+  console.log('Fetching gift data for ID:', id);
+  fetch('/gifts.json', {
+    cache: 'no-store'
+  })
+  .then(response => {
+    console.log('Response received:', response);
+    return response.json();
+  })
+  .then(data => {
+    console.log('Data received:', data);
+    const gift = data[id];
+    if (!gift) {
+      console.log('Gift not found for ID:', id);
+      return;
+    }
+
+    console.log('Gift data:', gift);
+    
+    // Store data in global variable
+    giftData = gift;
+    
+    // Populate final content with gift data
+    if (gift.greeting) {
+      console.log('Setting greeting:', gift.greeting);
+      document.getElementById('final-title').textContent = gift.greeting;
+      document.getElementById('final-title-static').textContent = gift.greeting;
+    }
+    if (gift.receiver) {
+      console.log('Setting receiver:', gift.receiver);
+      document.getElementById('receiverName').textContent = gift.receiver;
+      document.querySelector('#final-content-static .receiver-name').textContent = gift.receiver;
+    }
+    if (gift.message) {
+      console.log('Setting message:', gift.message);
+      document.getElementById('messageContent').innerHTML = gift.message.replace(/\n/g, '<br>');
+      document.querySelector('#final-content-static .message-content').innerHTML = gift.message.replace(/\n/g, '<br>');
+    }
+    if (gift.sender) {
+      console.log('Setting sender:', gift.sender);
+      document.getElementById('senderName').textContent = gift.sender;
+      document.querySelector('#final-content-static .sender-name').textContent = gift.sender;
+    }
+    if (gift.photo) {
+      console.log('Setting photo:', gift.photo);
+      const photoPath = `/assets/photos/${gift.photo}`;
+      console.log('Photo path:', photoPath);
+      document.getElementById('finalPhoto').src = photoPath;
+      document.getElementById('finalPhoto').style.display = 'block';
+      document.querySelector('#final-content-static .user-photo').src = photoPath;
+      document.querySelector('#final-content-static .user-photo').style.display = 'block';
+      document.getElementById('finalPhoto').onload = () => {
+        console.log('Photo loaded successfully');
+      };
+      document.getElementById('finalPhoto').onerror = () => {
+        console.error('Failed to load photo:', photoPath);
+      };
+    }
+  })
+  .catch(error => {
+    console.error('Error loading gift data:', error);
+  });
+}
+
+/* ============ INSTAGRAM SHARE FUNCTIONALITY ============ */
+async function shareToInstagram() {
+  const btn = document.getElementById('instagramShareBtn');
+  const toast = document.getElementById('shareToast');
+  const staticCard = document.getElementById('final-content-static');
+  
+  // Show loading state
+  btn.classList.add('loading');
+  btn.disabled = true;
+  showToast('Capturing your card...', '');
+  
+  try {
+    // Check if html2canvas is loaded
+    if (typeof html2canvas !== 'function') {
+      throw new Error('html2canvas library not loaded');
+    }
+    
+    // Temporarily show static card for capture (off-screen)
+    staticCard.style.display = 'flex';
+    staticCard.style.position = 'fixed';
+    staticCard.style.left = '-9999px';
+    staticCard.style.top = '-9999px';
+    staticCard.style.zIndex = '9999';
+    
+    // Capture the static content as canvas
+    const canvas = await html2canvas(staticCard, {
+      backgroundColor: null,
+      scale: 2, // Higher quality
+      useCORS: true,
+      allowTaint: true,
+      logging: false
+    });
+    
+    // Hide static card again
+    staticCard.style.display = 'none';
+    
+    // Convert canvas to blob
+    const blob = await new Promise(resolve => {
+      canvas.toBlob(resolve, 'image/png', 0.95);
+    });
+    
+    // Create file from blob
+    const file = new File([blob], 'gift-on-screen.png', { type: 'image/png' });
+    
+    // Try Instagram intent first on Android
+    const isAndroid = navigator.userAgent.toLowerCase().includes('android');
+    if (isAndroid) {
+      try {
+        // Convert blob to data URL for Instagram intent
+        const dataUrl = canvas.toDataURL('image/png');
+        
+        // Try to open Instagram Stories intent
+        const shareUrl = `intent://#Intent;package=com.instagram.android;action=com.instagram.share.ADD_TO_STORY;S.uri=${encodeURIComponent(dataUrl)};end`;
+        
+        // Create hidden iframe to test intent
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = shareUrl;
+        document.body.appendChild(iframe);
+        
+        // Wait for iframe to load or time out
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        document.body.removeChild(iframe);
+        
+        // If we got here, intent failed - continue to Web Share API
+      } catch (intentError) {
+        console.warn('Instagram intent failed:', intentError);
+        // Continue to Web Share API
+      }
+    }
+    
+    // Check if Web Share API is supported with file sharing
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      // Use Web Share API (opens native Android share sheet)
+      await navigator.share({
+        title: 'A Special Gift For You 💝',
+        text: 'Someone sent you a beautiful surprise! Open it to see what they crafted with love.',
+        files: [file]
+      });
+      
+      showToast('Shared successfully! 🎉', 'success');
+    } else {
+      // Fallback: Download the image
+      const link = document.createElement('a');
+      link.download = 'gift-on-screen.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      
+      showToast('Image downloaded! Open Instagram and share', '');
+    }
+    
+  } catch (error) {
+    console.error('Share error:', error);
+    
+    // Hide static card if it's still visible
+    const staticCardElement = document.getElementById('final-content-static');
+    if (staticCardElement) {
+      staticCardElement.style.display = 'none';
+    }
+    
+    // Fallback to download animated version
+    try {
+      const finalContent = document.getElementById('final-content');
+      const canvas = await html2canvas(finalContent, {
+        backgroundColor: null,
+        scale: 2,
+        useCORS: true,
+        allowTaint: true
+      });
+      
+      const link = document.createElement('a');
+      link.download = 'gift-on-screen.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      
+      showToast('Image downloaded! Share on Instagram 📤', '');
+    } catch (downloadError) {
+      showToast('Could not capture image. Try screenshotting!', 'error');
+    }
+  } finally {
+    // Remove loading state
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+}
+
+// Toast notification helper
+function showToast(message, type) {
+  const toast = document.getElementById('shareToast');
+  toast.textContent = message;
+  toast.className = 'share-toast show ' + type;
+  
+  // Auto hide after 4 seconds
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 4000);
+}
+</script>
+</body>
+</html>

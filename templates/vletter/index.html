@@ -1,0 +1,1283 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>For You ❤️</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&family=Poppins:wght@400;600&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --ink:#06060c;
+  --night:#0b1024;
+  --midnight:#111432;
+  --blue:#3a6cff;
+  --blue-soft:#8cb6ff;
+  --pink:#ff4fa3;
+  --pink-soft:#ff9acb;
+  --text:#f8f3f7;
+  --stroke:rgba(255,255,255,0.12);
+  --shadow-blue:rgba(58,108,255,0.28);
+  --shadow-pink:rgba(255,79,163,0.24);
+  --brand-gradient:linear-gradient(120deg,var(--blue-soft),var(--pink-soft));
+  --bg-gradient:
+    radial-gradient(780px 560px at 10% 8%, rgba(255, 180, 200, 0.2), transparent 60%),
+    radial-gradient(660px 520px at 90% 14%, rgba(255, 160, 180, 0.25), transparent 62%),
+    linear-gradient(135deg, #8b1a2e 0%, #6d1f35 45%, #5a2340 75%, #4d1a28 100%);
+  --font-display:"Playfair Display", serif;
+  --font-sans:"Manrope", sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-gradient);
+  color: var(--text);
+  overflow-x: hidden;
+  position: relative;
+}
+
+section {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s ease;
+}
+
+section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  margin-bottom: 1rem;
+  color: transparent;
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+}
+
+p {
+  max-width: 340px;
+  color: var(--text);
+  margin-bottom: 2rem;
+  opacity: 0.8;
+}
+
+/* Floating hearts */
+.heart-bg {
+  position: fixed;
+  bottom: -30px;
+  font-size: 2rem;
+  animation: floatUp linear infinite;
+  opacity: 0.8;
+  pointer-events: none;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  z-index: 100;
+}
+
+/* Prevent all images from being draggable and selectable */
+img {
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@keyframes floatUp {
+  to {
+    transform: translateY(-110vh);
+    opacity: 0;
+  }
+}
+
+/* Floating Love Notes */
+.love-note {
+  position: fixed;
+  bottom: -50px;
+  font-size: 0.9rem;
+  font-weight: 400;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 79, 163, 0.25);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  animation: floatUpNotes linear infinite;
+  opacity: 0.8;
+  pointer-events: auto;
+  cursor: pointer;
+  white-space: nowrap;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.15);
+  z-index: 200;
+}
+
+.love-note:hover {
+}
+
+.love-note.revealed {
+  background: rgba(255, 79, 163, 0.2);
+  border-color: rgba(255, 79, 163, 0.5);
+  box-shadow: 0 8px 20px rgba(255, 79, 163, 0.4);
+}
+
+@keyframes floatUpNotes {
+  to {
+    transform: translateY(-110vh) rotate(5deg);
+    opacity: 0;
+  }
+}
+
+/* Click heart */
+.big-heart {
+  font-size: 6rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 0 10px rgba(255, 79, 163, 0.5));
+}
+
+.big-heart:hover {
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 20px rgba(255, 79, 163, 0.8));
+}
+
+.big-heart:active {
+  transform: scale(1.4);
+  filter: drop-shadow(0 0 30px rgba(255, 79, 163, 1));
+}
+
+/* Enhanced Hidden Text */
+.hidden-text-container {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  max-width: 400px;
+  margin: 1.5rem auto 0;
+  padding: 1.5rem 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3), inset 0 0 20px rgba(255, 79, 163, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.hidden-text-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.8s;
+}
+
+.hidden-text-container.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.hidden-text-container.show::before {
+  left: 100%;
+}
+
+.hidden-text {
+  font-family: 'Dancing Script', cursive;
+  font-size: 1.8rem;
+  color: #ffd700;
+  text-align: center;
+  line-height: 1.4;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  position: relative;
+  z-index: 2;
+}
+
+.hidden-text.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Slide to unlock */
+.slider {
+  width: 240px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  padding: 8px;
+  border: 1px solid var(--stroke);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 25px rgba(0,0,0,.3);
+}
+
+.slider-track {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  padding: 4px;
+}
+
+.slider-handle {
+  width: 52px;
+  height: 52px;
+  background: var(--pink);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: grab;
+  box-shadow: 0 8px 20px rgba(255, 79, 163, 0.4);
+}
+
+.unlocked img {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.photo {
+  width: 220px;
+  border-radius: 24px;
+  margin-top: 2rem;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: 0.6s ease;
+  box-shadow: 0 10px 25px rgba(0,0,0,.2);
+}
+
+/* ================= BRANDING ================= */
+#branding {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 20;
+  opacity: 0.95;
+  transition: opacity 0.3s ease;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(10, 12, 26, 0.6);
+  border: 1px solid var(--stroke);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+#branding:hover {
+  opacity: 1;
+}
+
+.logo {
+  height: 48px;
+  width: auto;
+  transition: transform 0.3s ease;
+}
+
+#branding:hover .logo {
+  transform: scale(1.15);
+}
+
+.brand-name {
+  font-size: 0.9rem;
+  letter-spacing: 3px;
+  font-weight: 600;
+  color: transparent;
+  font-family: var(--font-display);
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+}
+
+#branding:hover .brand-name {
+  filter: brightness(1.1);
+}
+
+/* Scratch to Reveal */
+.scratch-container {
+  position: relative;
+  width: 200px;
+  margin: 1rem auto;
+  z-index: 300;
+  border-radius: 16px;
+  border: 2px solid var(--stroke);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  overflow: hidden;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.scratch-reveal-content {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  background: linear-gradient(135deg, #ff4fa3, #8cb6ff);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 1rem;
+  color: white;
+  font-family: var(--font-display);
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  z-index: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.scratch-reveal-content h3 {
+  font-size: 1.5rem;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+  line-height: 1.2;
+}
+
+.scratch-reveal-content .heart-icon {
+  font-size: 2.5rem;
+  margin-top: 0.5rem;
+  animation: pulse 2s infinite;
+  font-weight: normal;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.scratch-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #333;
+  z-index: 2;
+  clip-path: circle(0% at 50% 50%);
+  transition: clip-path 0.1s ease-out;
+  pointer-events: auto;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  will-change: clip-path;
+}
+
+.scratch-trail {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 3;
+  display: none !important;
+  transition: all 0.1s ease-out;
+  box-shadow: none;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.scratch-message {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  border-radius: 16px;
+  transition: all 0.5s ease;
+  z-index: 10;
+  pointer-events: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.scratch-message p {
+  font-size: 1.1rem;
+  color: var(--pink-soft);
+  text-align: center;
+  margin: 0;
+  padding: 1rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.scratch-message.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+}
+
+/* Gift Box Unwrapping */
+.gift-container {
+  position: relative;
+  margin: 1.5rem auto;
+  perspective: 1000px;
+}
+
+.gift-box {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  margin: 0 auto;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.gift-box:hover {
+  transform: scale(1.05);
+}
+
+.gift-body {
+  position: absolute;
+  top: 35px;
+  left: 15px;
+  width: 130px;
+  height: 130px;
+  background: linear-gradient(135deg, #ff4fa3, #ff9acb);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  overflow: hidden;
+}
+
+.gift-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.2) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.3;
+}
+
+.gift-top {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 140px;
+  height: 20px;
+  background: linear-gradient(135deg, #ff4fa3, #ff9acb);
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  transform: rotateX(90deg);
+  transform-origin: bottom;
+  transition: transform 0.8s ease;
+}
+
+.gift-ribbon {
+  position: absolute;
+  background: #8cb6ff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.ribbon-top {
+  top: 40px;
+  left: 85px;
+  width: 10px;
+  height: 140px;
+  transform: rotate(45deg);
+}
+
+.ribbon-side {
+  top: 105px;
+  left: 20px;
+  width: 140px;
+  height: 10px;
+  transform: rotate(45deg);
+}
+
+.gift-shadow {
+  position: absolute;
+  bottom: -20px;
+  left: 20px;
+  width: 140px;
+  height: 20px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 50%;
+  filter: blur(10px);
+  opacity: 0.6;
+}
+
+.gift-box.unwrapped .gift-top {
+  transform: rotateX(0deg) translateY(-160px);
+}
+
+.gift-box.unwrapped .gift-ribbon {
+  animation: ribbonFloat 2s ease-in-out infinite;
+}
+
+@keyframes ribbonFloat {
+  0%, 100% { transform: rotate(45deg) translateY(0); }
+  50% { transform: rotate(45deg) translateY(-10px); }
+}
+
+.unwrap-instruction {
+  margin-top: 1.5rem;
+  opacity: 0.8;
+}
+
+.unwrap-instruction p {
+  font-size: 1rem;
+  color: var(--pink-soft);
+  margin: 0;
+}
+
+/* Gift Reveal Animation */
+.gift-reveal-container {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%) translateY(60px);
+  opacity: 0;
+  transition: all 0.8s ease;
+  z-index: 100;
+}
+
+.gift-reveal-container.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.gift-reveal-gif {
+  width: 120px;
+  height: 120px;
+  border-radius: 16px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+  animation: giftFloat 2s ease-in-out infinite;
+  filter: drop-shadow(0 10px 20px rgba(255, 79, 163, 0.4));
+}
+
+@keyframes giftFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-10px) scale(1.05); }
+}
+
+/* Final section - prevent selection */
+#final-section, #final-section * {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Handwriting Animation */
+.handwriting-container {
+  position: relative;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.handwriting-text {
+  font-family: 'Dancing Script', cursive;
+  font-size: 1.6rem;
+  color: #ffd700;
+  line-height: 1.6;
+  opacity: 0;
+  white-space: pre-line;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.cursor {
+  color: #ffd700;
+  font-size: 1.6rem;
+  font-family: 'Dancing Script', cursive;
+  animation: blink 0.8s infinite;
+  display: inline-block;
+  vertical-align: bottom;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+</style>
+</head>
+<body>
+
+<div id="branding">
+<img src="/logo.png" alt="Gift On Screen" class="logo">
+  <span class="brand-name">GIFT ON SCREEN</span>
+</div>
+
+<!-- SECTION 1 -->
+<section id="greeting-section">
+  <h1>Hey You 💖</h1>
+  <p>Scroll slowly… I made this just for you.</p>
+</section>
+
+<!-- SECTION 2 -->
+<section>
+  <h1>Tap the Heart</h1>
+  <div class="big-heart" onclick="revealMessage()">❤️</div>
+  <div class="hidden-text-container" id="loveTextContainer">
+    <p class="hidden-text" id="loveText">
+      Every little thing about you makes my heart smile.
+    </p>
+  </div>
+</section>
+
+<!-- SECTION 3 -->
+<section>
+  <h1>Slide to Unlock 🔓</h1>
+
+  <div class="slider" id="slider">
+    <div class="slider-track">
+      <div class="slider-handle" id="handle">➜</div>
+    </div>
+  </div>
+
+  <img class="photo" id="photo" src="https://picsum.photos/500" />
+</section>
+
+<!-- SECTION 4 -->
+<section>
+  <h1>Scratch to Reveal 💝</h1>
+  <div class="scratch-container">
+    <div class="scratch-reveal-content">
+      <h3 id="scratchRevealText">I Love You</h3>
+      <div class="heart-icon">❤️</div>
+    </div>
+    <div class="scratch-overlay" id="scratchOverlay"></div>
+    <div class="scratch-trail" id="scratchTrail"></div>
+    <div id="scratchMessage" class="scratch-message">
+      <p>Scratch the surface to reveal my secret message...</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5 -->
+<section id="gift-section">
+  <h1 id="gift-heading">Gift Box Unwrapping 🎁</h1>
+  <div class="gift-container">
+    <div class="gift-box" id="giftBox">
+      <div class="gift-ribbon ribbon-top"></div>
+      <div class="gift-ribbon ribbon-side"></div>
+      <div class="gift-top"></div>
+      <div class="gift-body">
+        <div class="gift-pattern"></div>
+      </div>
+      <div class="gift-shadow"></div>
+    </div>
+    <div class="unwrap-instruction">
+      <p>Click and hold to unwrap your gift</p>
+    </div>
+    <div class="gift-reveal-container" id="giftRevealContainer" style="display: none;">
+      <img src="assets/your-gift.gif" alt="Your Gift" class="gift-reveal-gif" id="giftRevealGif">
+    </div>
+  </div>
+  <audio id="giftOpenSound" src="../../assets/audio/letter-gift-open.mp3" preload="auto"></audio>
+</section>
+
+<!-- SECTION 6 -->
+<section id="final-section">
+  <h1>One More Thing…</h1>
+  <div class="handwriting-container">
+    <p class="handwriting-text" id="finalMessage">
+      I don't need a special day to love you.
+      <br><br>
+      But I'll choose you every day anyway ❤️
+    </p>
+    <span class="cursor" id="cursor">|</span>
+  </div>
+</section>
+
+<script>
+/* Data Loading and Injection */
+let giftData = null;
+let currentGiftId = null;
+
+// Load gift data from URL parameter
+function loadGiftData() {
+  const urlParams = new URLSearchParams(window.location.search);
+  currentGiftId = urlParams.get('id') || 'VLETTER007'; // Default to VLETTER007 (valentine specific)
+  
+  // First try the relative path that should work from the templates/valentines/vletter/ directory
+  fetch('../../gifts.json')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Loaded gift data:', data);
+      if (data[currentGiftId]) {
+        giftData = data[currentGiftId];
+        console.log('Found gift data for ID:', currentGiftId, giftData);
+        injectGiftData();
+      } else {
+        console.warn(`Gift ID ${currentGiftId} not found in data, using defaults`);
+        console.log('Available gift IDs:', Object.keys(data));
+        injectDefaults();
+      }
+    })
+    .catch(error => {
+      console.error('Error loading gifts.json from relative path:', error);
+      console.log('Attempting to load from root path...');
+      // Fallback to root path
+      fetch('/gifts.json')
+        .then(response => response.json())
+        .then(data => {
+          console.log('Loaded gift data from root path:', data);
+          if (data[currentGiftId]) {
+            giftData = data[currentGiftId];
+            injectGiftData();
+          } else {
+            console.warn(`Gift ID ${currentGiftId} not found, using defaults`);
+            injectDefaults();
+          }
+        })
+        .catch(error2 => {
+          console.error('Error loading gifts.json from root path:', error2);
+          injectDefaults();
+        });
+    });
+}
+
+// Inject personalized data into the page
+function injectGiftData() {
+  const messages = giftData.messages || {};
+  
+  // Update Section 1 - Greeting
+  const greetingElement = document.getElementById('greeting-section').querySelector('h1');
+  if (greetingElement && messages.greeting) {
+    greetingElement.textContent = messages.greeting;
+  }
+  
+  // Update Section 2 - Heart Tap Message
+  const heartMessageElement = document.getElementById('loveText');
+  if (heartMessageElement && messages.heartTap) {
+    heartMessageElement.textContent = messages.heartTap;
+  }
+  
+  // Update Section 4 - Scratch Reveal Message
+  if (messages.scratchReveal) {
+    // Update the scratch reveal function to use custom message
+    window.customScratchMessage = messages.scratchReveal;
+  }
+  
+  // Update Section 6 - Final Message
+  const finalMessageElement = document.getElementById('final-section').querySelector('p');
+  if (finalMessageElement && messages.finalMessage) {
+    finalMessageElement.innerHTML = messages.finalMessage.replace(/\n/g, '<br><br>');
+  }
+  
+  // Update photo source
+  const photoElement = document.getElementById('photo');
+  if (photoElement && giftData.photo) {
+    photoElement.src = `../../assets/photos/${giftData.photo}`;
+  } else if (photoElement && currentGiftId) {
+    // Fallback to using currentGiftId if no specific photo is defined
+    const fallbackPhoto = `../../assets/photos/${currentGiftId}.jpg`;
+    photoElement.src = fallbackPhoto;
+    // Check if the fallback photo exists (optional but helpful)
+    const img = new Image();
+    img.src = fallbackPhoto;
+    img.onerror = () => {
+      console.warn(`Photo not found: ${fallbackPhoto}`);
+      // You could set a default image here if needed
+    };
+  }
+}
+
+// Fallback to default messages if no data found
+function injectDefaults() {
+  // Keep existing default content
+  console.log('Using default content');
+}
+
+/* Reveal on scroll */
+const sections = document.querySelectorAll("section");
+const observer = new IntersectionObserver(
+  entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add("visible");
+        // Trigger handwriting animation for final section
+        if (e.target.id === 'final-section') {
+          startHandwritingAnimation();
+        }
+      }
+    });
+  },
+  { threshold: 0.3 }
+);
+sections.forEach(sec => observer.observe(sec));
+
+// Initialize data loading
+loadGiftData();
+
+/* Handwriting Animation */
+function startHandwritingAnimation() {
+  const textElement = document.getElementById('finalMessage');
+  const cursor = document.getElementById('cursor');
+  const originalText = textElement.innerHTML;
+  let index = 0;
+  let isTyping = true;
+  
+  // Reset text and show cursor
+  textElement.innerHTML = '';
+  cursor.style.display = 'inline-block';
+  textElement.style.opacity = '1';
+  
+  // Typing effect
+  const typeWriter = () => {
+    if (index < originalText.length) {
+      // Handle HTML tags
+      if (originalText.charAt(index) === '<') {
+        const tagEnd = originalText.indexOf('>', index) + 1;
+        textElement.innerHTML += originalText.substring(index, tagEnd);
+        index = tagEnd;
+      } else {
+        textElement.innerHTML += originalText.charAt(index);
+        index++;
+      }
+      // Variable typing speed for natural feel
+      const randomSpeed = Math.floor(Math.random() * 50) + 40;
+      setTimeout(typeWriter, randomSpeed);
+    } else {
+      // Typing complete - hide cursor and show blinking
+      cursor.style.display = 'none';
+      setTimeout(() => {
+        cursor.style.display = 'inline-block';
+      }, 500);
+    }
+  };
+  
+  typeWriter();
+}
+
+/* Floating hearts */
+const hearts = ["💖","💕","💗","💘"];
+setInterval(() => {
+  const h = document.createElement("div");
+  h.className = "heart-bg";
+  h.textContent = hearts[Math.floor(Math.random()*hearts.length)];
+  h.style.left = Math.random()*100 + "vw";
+  h.style.animationDuration = 6 + Math.random()*6 + "s";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),12000);
+}, 600);
+
+/* Floating Love Notes */
+const loveQuotes = [
+  "You're my favorite hello and hardest goodbye",
+  "I love you more than yesterday, but less than tomorrow",
+  "Every moment with you feels like magic",
+  "You make my heart skip a beat",
+  "I'm so lucky to have you in my life",
+  "You're my sunshine on a cloudy day",
+  "Loving you is the best thing I've ever done",
+  "You're my happily ever after",
+  "I can't imagine life without you",
+  "You're my everything"
+];
+
+function createLoveNote() {
+  const note = document.createElement("div");
+  note.className = "love-note";
+  const randomQuote = loveQuotes[Math.floor(Math.random()*loveQuotes.length)];
+  note.textContent = randomQuote;
+  
+  // Random position
+  note.style.left = Math.random()*85 + "vw";
+  note.style.animationDuration = 8 + Math.random()*6 + "s";
+  
+  // Click to reveal
+  note.addEventListener("click", () => {
+    if (!note.classList.contains("revealed")) {
+      note.classList.add("revealed");
+      // Add heart burst effect
+      createHeartBurst(note.offsetLeft + note.offsetWidth/2, note.offsetTop + note.offsetHeight/2);
+    }
+  });
+  
+  document.body.appendChild(note);
+  
+  // Remove after animation
+  setTimeout(() => {
+    if (note.parentNode) {
+      note.remove();
+    }
+  }, 14000);
+}
+
+// Spawn love notes every 10 seconds
+setInterval(createLoveNote, 10000);
+
+// Initial notes
+setTimeout(() => {
+  createLoveNote();
+  setTimeout(createLoveNote, 2000);
+}, 5000);
+
+function createHeartBurst(x, y) {
+  for (let i = 0; i < 8; i++) {
+    const heart = document.createElement("div");
+    heart.className = "heart-bg";
+    heart.textContent = "❤️";
+    heart.style.left = x + "px";
+    heart.style.top = y + "px";
+    heart.style.animationDuration = "1.5s";
+    heart.style.opacity = "1";
+    heart.style.fontSize = "1.2rem";
+    document.body.appendChild(heart);
+    
+    // Random direction
+    const angle = (Math.PI * 2 * i) / 8;
+    const distance = 60 + Math.random() * 40;
+    const moveX = Math.cos(angle) * distance;
+    const moveY = Math.sin(angle) * distance;
+    
+    setTimeout(() => {
+      heart.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.5)`;
+      setTimeout(() => heart.remove(), 1500);
+    }, 10);
+  }
+}
+
+/* Click heart reveal */
+function revealMessage() {
+  const container = document.getElementById("loveTextContainer");
+  const text = document.getElementById("loveText");
+  
+  // Add show class to container and text
+  container.classList.add("show");
+  text.classList.add("show");
+  
+  // Create heart burst effect around the message
+  const containerRect = container.getBoundingClientRect();
+  const centerX = containerRect.left + containerRect.width / 2;
+  const centerY = containerRect.top + containerRect.height / 2;
+  
+  createHeartBurst(centerX, centerY);
+}
+
+/* Slide to unlock */
+const handle = document.getElementById("handle");
+const slider = document.getElementById("slider");
+const photo = document.getElementById("photo");
+
+let dragging = false;
+
+handle.addEventListener("pointerdown", () => dragging = true);
+document.addEventListener("pointerup", () => dragging = false);
+document.addEventListener("pointermove", e => {
+  if (!dragging) return;
+  const rect = slider.getBoundingClientRect();
+  let x = e.clientX - rect.left - 30;
+  x = Math.max(0, Math.min(x, 200));
+  handle.style.transform = `translateX(${x}px)`;
+  if (x > 180) {
+    photo.style.opacity = 1;
+    photo.style.transform = "scale(1)";
+  }
+});
+
+/* Scratch to Reveal */
+const scratchOverlay = document.getElementById('scratchOverlay');
+const scratchTrail = document.getElementById('scratchTrail');
+const scratchMessage = document.getElementById('scratchMessage');
+const scratchRevealText = document.getElementById('scratchRevealText');
+let isScratching = false;
+let scratchCircles = [];
+let scratchPercentage = 0;
+
+// Initialize scratch system
+function initScratchSystem() {
+  // Update text with custom message if available
+  if (window.customScratchMessage) {
+    scratchRevealText.textContent = window.customScratchMessage;
+  }
+  
+  // Set up event listeners
+  const scratchContainer = document.querySelector('.scratch-container');
+  
+  scratchContainer.addEventListener('pointerdown', (e) => {
+    isScratching = true;
+    updateScratchTrail(e);
+    e.preventDefault();
+  });
+  
+  scratchContainer.addEventListener('pointermove', (e) => {
+    if (isScratching) {
+      updateScratchTrail(e);
+      addScratchCircle(e);
+    }
+  });
+  
+  scratchContainer.addEventListener('pointerleave', () => {
+    isScratching = false;
+    scratchTrail.style.display = 'none';
+  });
+  
+  window.addEventListener('pointerup', () => {
+    isScratching = false;
+    scratchTrail.style.display = 'none';
+  });
+  
+  window.addEventListener('pointercancel', () => {
+    isScratching = false;
+    scratchTrail.style.display = 'none';
+  });
+}
+
+// Update visual scratch trail
+function updateScratchTrail(e) {
+  const rect = scratchOverlay.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  
+  scratchTrail.style.display = 'block';
+  scratchTrail.style.transform = `translate(${x - 7}px, ${y - 7}px)`;
+}
+
+// Add scratch circle to clip-path
+function addScratchCircle(e) {
+  const rect = scratchOverlay.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const radius = 12; // Scratch radius
+  
+  // Add new circle
+  scratchCircles.push(`${radius}px at ${x}px ${y}px`);
+  
+  // Update clip-path with all circles
+  const clipPath = `circle(${scratchCircles.join(', ')})`;
+  scratchOverlay.style.clipPath = clipPath;
+  
+  // Check if revealed
+  checkReveal();
+}
+
+// Check if enough is scratched to reveal
+function checkReveal() {
+  // Calculate approximate scratched area
+  const totalCircles = scratchCircles.length;
+  const estimatedCoverage = Math.min(totalCircles * 0.05, 1.0); // Rough estimate
+  
+  if (estimatedCoverage > 0.6) { // 60% scratched
+    revealScratchMessage();
+  }
+}
+
+function revealScratchMessage() {
+  scratchMessage.classList.add('hidden');
+  
+  // Add confetti effect
+  createConfetti();
+  
+  // Add pulse animation to revealed content
+  scratchRevealText.style.animation = 'pulse 1s infinite';
+}
+
+// Initialize the scratch system when page loads
+document.addEventListener('DOMContentLoaded', () => {
+  // Force hide the scratch trail on load
+  const scratchTrail = document.getElementById('scratchTrail');
+  if (scratchTrail) {
+    scratchTrail.style.display = 'none !important';
+    scratchTrail.style.opacity = '0';
+  }
+  initScratchSystem();
+});
+
+function createConfetti() {
+  const colors = ['#ff4fa3', '#8cb6ff', '#ffd700', '#ff6b6b', '#4ecdc4'];
+  
+  for (let i = 0; i < 50; i++) {
+    const confetti = document.createElement('div');
+    confetti.style.position = 'fixed';
+    confetti.style.left = Math.random() * 100 + 'vw';
+    confetti.style.top = '-10px';
+    confetti.style.width = '8px';
+    confetti.style.height = '8px';
+    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.borderRadius = '50%';
+    confetti.style.pointerEvents = 'none';
+    confetti.style.zIndex = '1000';
+    confetti.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
+    
+    document.body.appendChild(confetti);
+    
+    const fallDuration = 2 + Math.random() * 3;
+    const moveX = (Math.random() - 0.5) * 100;
+    
+    confetti.animate([
+      { transform: 'translateY(-10px) rotate(0deg)', opacity: 1 },
+      { transform: `translate(${moveX}px, ${window.innerHeight + 10}px) rotate(360deg)`, opacity: 0 }
+    ], {
+      duration: fallDuration * 1000,
+      easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+    }).onfinish = () => confetti.remove();
+  }
+}
+
+/* Gift Box Unwrapping */
+const giftBox = document.getElementById('giftBox');
+let isUnwrapping = false;
+let unwrapTimer;
+
+function startUnwrapping() {
+  if (isUnwrapping) return;
+  isUnwrapping = true;
+  
+  // Add sparkle effect
+  createSparkles(giftBox.offsetLeft + giftBox.offsetWidth/2, giftBox.offsetTop + giftBox.offsetHeight/2);
+  
+  // Unwrap animation
+  setTimeout(() => {
+    giftBox.classList.add('unwrapped');
+    
+    // Change heading with pop-up effect
+    const heading = document.getElementById('gift-section').querySelector('h1');
+    if (heading) {
+      heading.textContent = 'I am your gift, Handle me ❤️';
+      heading.style.color = '#ffd700';
+      heading.style.transform = 'scale(0)';
+      heading.style.transition = 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+      
+      // Trigger pop-up animation
+      setTimeout(() => {
+        heading.style.transform = 'scale(1.3)';
+        setTimeout(() => {
+          heading.style.transform = 'scale(1)';
+        }, 200);
+      }, 10);
+    }
+    
+    // Show message
+    const instruction = document.querySelector('.unwrap-instruction p');
+    instruction.textContent = 'I am your gift';
+    instruction.style.color = '#ffd700';
+    instruction.style.fontWeight = 'bold';
+    
+    // Show the GIF with animation
+    const giftRevealContainer = document.getElementById('giftRevealContainer');
+    giftRevealContainer.style.display = 'block';
+    setTimeout(() => {
+      giftRevealContainer.classList.add('visible');
+      
+      // Play gift open sound
+      const giftSound = document.getElementById('giftOpenSound');
+      giftSound.currentTime = 0; // Reset to start
+      giftSound.play().catch(error => {
+        console.error('Error playing sound:', error);
+      });
+    }, 100);
+    
+    // Add floating hearts
+    createFloatingHearts();
+  }, 1000);
+}
+
+function resetUnwrapping() {
+  isUnwrapping = false;
+  giftBox.classList.remove('unwrapped');
+  const instruction = document.querySelector('.unwrap-instruction p');
+  instruction.textContent = 'Click and hold to unwrap your gift';
+  instruction.style.color = 'var(--pink-soft)';
+  instruction.style.fontWeight = 'normal';
+}
+
+// Event listeners for gift box
+giftBox.addEventListener('mousedown', () => {
+  unwrapTimer = setTimeout(startUnwrapping, 500);
+});
+
+giftBox.addEventListener('touchstart', (e) => {
+  unwrapTimer = setTimeout(startUnwrapping, 500);
+  e.preventDefault();
+}, { passive: false });
+
+window.addEventListener('mouseup', () => {
+  clearTimeout(unwrapTimer);
+  if (!isUnwrapping) {
+    resetUnwrapping();
+  }
+});
+
+window.addEventListener('touchend', () => {
+  clearTimeout(unwrapTimer);
+  if (!isUnwrapping) {
+    resetUnwrapping();
+  }
+});
+
+function createSparkles(x, y) {
+  for (let i = 0; i < 20; i++) {
+    const sparkle = document.createElement('div');
+    sparkle.style.position = 'fixed';
+    sparkle.style.left = x + 'px';
+    sparkle.style.top = y + 'px';
+    sparkle.style.width = '4px';
+    sparkle.style.height = '4px';
+    sparkle.style.background = '#ffd700';
+    sparkle.style.borderRadius = '50%';
+    sparkle.style.boxShadow = '0 0 8px #ffd700';
+    sparkle.style.pointerEvents = 'none';
+    sparkle.style.zIndex = '1000';
+    
+    document.body.appendChild(sparkle);
+    
+    const angle = (Math.PI * 2 * i) / 20;
+    const distance = 40 + Math.random() * 30;
+    const moveX = Math.cos(angle) * distance;
+    const moveY = Math.sin(angle) * distance;
+    
+    sparkle.animate([
+      { transform: 'scale(0) translate(0, 0)', opacity: 1 },
+      { transform: `scale(1) translate(${moveX}px, ${moveY}px)`, opacity: 0 }
+    ], {
+      duration: 800,
+      easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+    }).onfinish = () => sparkle.remove();
+  }
+}
+
+function createFloatingHearts() {
+  for (let i = 0; i < 15; i++) {
+    const heart = document.createElement('div');
+    heart.className = 'heart-bg';
+    heart.textContent = '💝';
+    heart.style.left = Math.random() * 100 + 'vw';
+    heart.style.top = Math.random() * 50 + 'vh';
+    heart.style.animationDuration = '3s';
+    heart.style.opacity = '1';
+    heart.style.fontSize = '1.5rem';
+    heart.style.zIndex = '50';
+    document.body.appendChild(heart);
+    
+    setTimeout(() => {
+      heart.style.transform = `translateY(-${Math.random() * 100 + 50}px) rotate(${Math.random() * 360}deg)`;
+      setTimeout(() => heart.remove(), 3000);
+    }, i * 100);
+  }
+}
+</script>
+
+</body>
+</html>
